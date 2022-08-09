@@ -8,17 +8,17 @@ const { Pool } = pg;
 const databaseConfig = {
   connectionString: process.env.DATABASE_URL,
   ssl: {
-      rejectUnauthorized: false
-  }
-}
+    rejectUnauthorized: false,
+  },
+};
 
 const db = new Pool(databaseConfig);
 
 try {
-    await db.connect();
-    console.log("Connected DB");
-  } catch (error) {
-    console.log("Error DB");
-  }
+  await db.connect();
+  console.log("Connected DB");
+} catch (error) {
+  console.log("Error DB");
+}
 
 export default db;
