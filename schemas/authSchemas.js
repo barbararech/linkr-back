@@ -1,14 +1,18 @@
 import joi from "joi";
 
-const signUpSchema = joi.object({
-  
-  email: joi.string().email().required(),
-  password: joi.string().required(),
-  username: joi.string().required(),
-  pictureUrl: joi.string().required(),
-});
+export const schemas = {
+  signUpSchema: joi.object().keys({
+    email: joi.string().email().required(),
+    password: joi.string().required(),
+    username: joi.string().required(),
+    pictureUrl: joi.string().required(),
+  }),
 
-export default signUpSchema;
+  signInSchema: joi.object().keys({
+    email: joi.string().email().required(),
+    password: joi.string().required(),
+  }),
+};
 
 // Schema de signup com validação mais forte em breve
 
