@@ -8,19 +8,16 @@ export async function signUp(req, res) {
   const passwordEncrypted = bcrypt.hashSync(password, 10);
 
   try {
-    const checkUser = await userRepository.getUserByEmail(email);
+    const { rows: user } = await userRepository.getUserByEmail(email);
 
-    if (checkUser.rowCount > 0) {
-      return res.status(409).send("Email já cadastrado");
+    if (user.length === 0) {
+      return res.sendStatus(401);
     }
 
-    await db.query(
-      `INSERT INTO users (email, password, username, "pictureUrl") VALUES ($1, $2, $3, $4)`,
-      [email, passwordEncrypted, username, pictureUrl]
-    );
-    
+    await userRepository.addUser(email, passwordEncrypted, username, pictureUrl);
+
     return res.sendStatus(201);
-  } catch (e) {
+  } catch (error) {
     return res.status(500).send(error);
   }
 }
