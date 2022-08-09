@@ -9,9 +9,9 @@ export async function signUp(req, res) {
 
   try {
     const { rows: user } = await userRepository.getUserByEmail(email);
-
-    if (user.length === 0) {
-      return res.sendStatus(401);
+    console.log(user)
+    if (user.length !== 0) {
+      return res.sendStatus(409);
     }
 
     await userRepository.addUser(email, passwordEncrypted, username, pictureUrl);
