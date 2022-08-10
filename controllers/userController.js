@@ -2,7 +2,7 @@ import { userRepository } from "../repositories/userRepositories.js";
 
 export async function getUsers(req, res) {
   try {
-    const result = await userRepository.getAllUsers;
+    const result = await userRepository.getAllUsers();
     res.status(200).send(result.rows);
   } catch (e) {
     res.sendStatus(500);
