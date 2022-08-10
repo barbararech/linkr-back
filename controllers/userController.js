@@ -10,7 +10,7 @@ export async function getUsers(req, res) {
 }
 
 export async function getUserPic(req, res) {
-  const id = res.locals.userId;
+  const id = res.locals.id;
   try {
     const result = await userRepository.getUserPicById(id);
     if (result.rowCount === 0) {

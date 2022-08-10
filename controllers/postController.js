@@ -4,11 +4,12 @@ import urlMetadata from "url-metadata"
 
 
 export async function publishPost(req, res) {
-  const { link, article } = req.body;
-  const { userId } = res.locals;
-
+  //const { link, article } = req.body;
+  //const { userId } = res.locals;
+    console.log(req.body)
   try {
-    await createPost(link, article, userId);
+    const urlInfo = await urlMetadata (req.body.url, {descriptionLength: 200})
+    await createPost(req.body.url, req.body.text, res.locals.id, urlInfo.title, urlInfo.description, urlInfo.image);
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
@@ -25,21 +26,7 @@ export async function getPosts (req, res){
         if(posts.rowCount === 0){
             res.status(404).send('There are no posts yet')
         }
-            for(let post of posts.rows){
-                const teste = await urlMetadata (post.link, {descriptionLength: 50})
-                const postInfo = {
-                    username: post.username,
-                    picture: post.pictureUrl,
-                    link: post.link,
-                    article: post.article,
-                    title: teste.title, 
-                    image: teste.image, 
-                    description: teste.description
-                }
-                postsArr.push(postInfo)
-            }
-
-        res.status(200).send(postsArr)
+        res.status(200).send(posts.rows)
     }catch (err){
         console.error(err);
         res.sendStatus(500);
