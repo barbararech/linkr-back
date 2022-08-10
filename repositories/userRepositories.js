@@ -1,9 +1,4 @@
-import db from '../database/db.js';
-
-async function getUserByEmail(email) {
-  console.log(email);
-  return db.query(`SELECT * FROM "users" WHERE email = $1;`, [email]);
-}
+import db from "../database/db.js";
 
 async function addUser(email, passwordEncrypted, username, pictureUrl) {
   return db.query(
@@ -12,7 +7,15 @@ async function addUser(email, passwordEncrypted, username, pictureUrl) {
   );
 }
 
-export async function getUserPicById(id) {
+async function getAllUsers() {
+  return db.query(`SELECT * FROM "users"`);
+}
+
+async function getUserByEmail(email) {
+  return db.query(`SELECT * FROM "users" WHERE email = $1;`, [email]);
+}
+
+async function getUserPicById(id) {
   return db.query(
     `
   SELECT "pictureUrl"
@@ -23,6 +26,8 @@ export async function getUserPicById(id) {
 }
 
 export const userRepository = {
-  getUserByEmail,
   addUser,
+  getAllUsers,
+  getUserByEmail,
+  getUserPicById,
 };

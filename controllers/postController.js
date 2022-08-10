@@ -8,7 +8,7 @@ export async function publishPost(req, res) {
     await createPost(link, article, userId);
     res.sendStatus(201);
   } catch (error) {
-    return res.sendStatus(500);
     console.log(error);
+    return res.sendStatus(500);
   }
 }
