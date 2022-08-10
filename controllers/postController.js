@@ -1,5 +1,21 @@
+import { createPost } from '../repositories/postRepository.js';
 import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata"
+
+
+export async function publishPost(req, res) {
+  const { link, article } = req.body;
+  const { userId } = res.locals;
+
+  try {
+    await createPost(link, article, userId);
+    res.sendStatus(201);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
 
 export async function getPosts (req, res){
     try{
@@ -29,3 +45,4 @@ export async function getPosts (req, res){
         res.sendStatus(500);
     }
 }
+
