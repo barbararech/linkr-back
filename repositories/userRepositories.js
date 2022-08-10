@@ -15,6 +15,10 @@ async function getUserByEmail(email) {
   return db.query(`SELECT * FROM "users" WHERE email = $1;`, [email]);
 }
 
+async function getUserById(id) {
+  return db.query(`SELECT * FROM "users" WHERE id = $1;`, [id]);
+}
+
 async function getUserPicById(id) {
   return db.query(
     `
@@ -29,5 +33,6 @@ export const userRepository = {
   addUser,
   getAllUsers,
   getUserByEmail,
+  getUserById,
   getUserPicById,
 };
