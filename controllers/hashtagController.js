@@ -3,7 +3,6 @@ import { userRepository } from "../repositories/userRepositories.js";
 
 export async function trending(req, res) {
   const { id } = res.locals;
-    console.log(id)
   try {
     const { rows: user } = await userRepository.getUserById(id);
 
@@ -12,7 +11,7 @@ export async function trending(req, res) {
     }
 
     const { rows: trending } = await hashtagRepository.getTrending();
-
+    console.log(trending)
     return res.status(200).send(trending);
   } catch (error) {
     return res.status(500).send(error);

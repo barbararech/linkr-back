@@ -1,5 +1,5 @@
-import pg from "pg";
-import dotenv from "dotenv";
+import pg from 'pg';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -16,9 +16,9 @@ const db = new Pool(databaseConfig);
 
 try {
   await db.connect();
-  console.log("Connected DB");
+  console.log('Connected DB');
 } catch (error) {
-  console.log("Error DB");
+  console.log('Error DB');
 }
 
 export default db;

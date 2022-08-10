@@ -1,4 +1,3 @@
-import db from "../database/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { userRepository } from "../repositories/userRepositories.js";
