@@ -6,7 +6,7 @@ import linkSchema from '../schemas/linkSchema.js';
 
 const postRouter = Router();
 
-postRouter.post('/post', publishPost);
+postRouter.post('/post', tokenValidationMiddleware, publishPost);
 
 postRouter.get('/post', (req, res) => {
   res.send('hello world');
