@@ -91,7 +91,7 @@ async function getPosts() {
 
 async function getPostsHashtag(hashtag) {
   return db.query(`SELECT p.*, u."pictureUrl", u.username, 
-    ht.name
+    ht.name AS "hashtagName"
       FROM posts p
         JOIN users u
         ON p."userId" = u.id
