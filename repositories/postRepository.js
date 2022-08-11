@@ -17,10 +17,19 @@ async function getPosts() {
     JOIN users u
     ON p."userId" = u.id
     ORDER BY "createdAt" DESC LIMIT 20`);
-  }
+}
 
+async function getPostById(id){
+  return db.query(`SELECT * FROM posts WHERE id = $1`, [id] )
+}
+  
+async function editPost(id, text){
+  db.query(`UPDATE posts SET article = $1 WHERE id = $2`, [text, id])
+}
 
 export const postRepository = {
-   getPosts
+   getPosts,
+   getPostById,
+   editPost
 };
 

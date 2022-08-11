@@ -21,7 +21,6 @@ export async function publishPost(req, res) {
 export async function getPosts (req, res){
     try{
         const posts = await postRepository.getPosts()
-        const postsArr = []
 
         if(posts.rowCount === 0){
             res.status(404).send('There are no posts yet')
@@ -33,3 +32,16 @@ export async function getPosts (req, res){
     }
 }
 
+export async function editPost( req, res) {
+  try{
+    const id = res.locals.postId
+    const userId = res.locals.id
+    const text = req.body.text
+    console.log(userId)
+    await postRepository.editPost(id,text)
+    res.status(200).send("atualizado")
+  }catch(err){
+    console.error(err);
+    res.sendStatus(500);
+  }
+}
