@@ -1,4 +1,3 @@
-
 import {
   createPost,
   registerLike,
@@ -6,25 +5,30 @@ import {
   getLikes,
   countLikes,
   removePostLikes,
-} from '../repositories/postRepository.js';
+} from "../repositories/postRepository.js";
 import { postRepository } from "../repositories/postRepository.js";
-import urlMetadata from "url-metadata"
-
+import urlMetadata from "url-metadata";
 
 export async function publishPost(req, res) {
   //const { link, article } = req.body;
   //const { userId } = res.locals;
-    console.log(req.body)
+  console.log(req.body);
   try {
-    const urlInfo = await urlMetadata (req.body.url, {descriptionLength: 200})
-    await createPost(req.body.url, req.body.text, res.locals.id, urlInfo.title, urlInfo.description, urlInfo.image);
+    const urlInfo = await urlMetadata(req.body.url, { descriptionLength: 200 });
+    await createPost(
+      req.body.url,
+      req.body.text,
+      res.locals.id,
+      urlInfo.title,
+      urlInfo.description,
+      urlInfo.image
+    );
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 }
-
 
 export async function likePost(req, res) {
   const { postId } = req.params;
@@ -63,7 +67,7 @@ export async function returnLikes(req, res) {
     const likes = await countLikes(postId);
     if (userLiked.rows.length > 0) {
       liked = true;
-      allLikes.rows.unshift({ username: 'Você' });
+      allLikes.rows.unshift({ username: "Você" });
     }
     res.json({ likesUsers: allLikes.rows, liked, likes });
   } catch (error) {
@@ -72,19 +76,32 @@ export async function returnLikes(req, res) {
   }
 }
 
+export async function getPosts(req, res) {
+  try {
+    const posts = await postRepository.getPosts();
+    const postsArr = [];
 
-export async function getPosts (req, res){
-    try{
-        const posts = await postRepository.getPosts()
-        const postsArr = []
-
-        if(posts.rowCount === 0){
-            res.status(404).send('There are no posts yet')
-        }
-        res.status(200).send(posts.rows)
-    }catch (err){
-        console.error(err);
-        res.sendStatus(500);
+    if (posts.rowCount === 0) {
+      res.status(404).send("There are no posts yet");
     }
+    res.status(200).send(posts.rows);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
 }
 
+export async function getPostsHashtag(req, res) {
+  try {
+    const { hashtag } = req.params;
+    const posts = await postRepository.getPostsHashtag(hashtag);
+
+    if (posts.rowCount === 0) {
+      res.status(404).send("There are no posts yet");
+    }
+    res.status(200).send(posts.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+}

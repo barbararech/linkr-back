@@ -1,7 +1,14 @@
-import db from '../database/db.js';
+import db from "../database/db.js";
 
-export async function createPost(link, article, userId, urlTitle, urlDescription, urlImage) {
-  console.log(link)
+export async function createPost(
+  link,
+  article,
+  userId,
+  urlTitle,
+  urlDescription,
+  urlImage
+) {
+  console.log(link);
   return db.query(
     `
     INSERT INTO posts (link, article, "userId", "urlTitle", "urlDescription", "urlImage")
@@ -76,15 +83,27 @@ export async function removePostLikes(postId) {
 }
 
 async function getPosts() {
-
-    return db.query(`SELECT p.*, u."pictureUrl", u.username FROM posts p
+  return db.query(`SELECT p.*, u."pictureUrl", u.username FROM posts p
     JOIN users u
     ON p."userId" = u.id
     ORDER BY "createdAt" DESC LIMIT 20`);
-  }
+}
 
+async function getPostsHashtag(hashtag) {
+  return db.query(`SELECT p.*, u."pictureUrl", u.username, 
+    ht.name
+      FROM posts p
+        JOIN users u
+        ON p."userId" = u.id
+        JOIN "postHashtag" ph
+        ON ph."postId" = p.id
+      JOIN hashtags ht
+        ON ht.id = ph."hashtagId"
+      WHERE "name" = '${hashtag}'
+        ORDER BY "createdAt" DESC LIMIT 20`);
+}
 
 export const postRepository = {
-   getPosts
+  getPosts,
+  getPostsHashtag,
 };
-
