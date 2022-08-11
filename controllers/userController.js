@@ -22,3 +22,14 @@ export async function getUserPic(req, res) {
     res.status(500).send("Erro de conexão com o servidor");
   }
 }
+
+export async function getUserId(req, res){
+  
+  try{
+    const id = {id: res.locals.id}
+    res.status(200).send(id)
+  }catch(err){
+        console.error(err);
+    res.status(500).send("Erro de conexão com o servidor");
+  }
+}
