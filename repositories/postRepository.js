@@ -1,6 +1,6 @@
 import db from "../database/db.js";
 
-export async function createPost(
+async function createPost(
   link,
   article,
   userId,
@@ -18,7 +18,7 @@ export async function createPost(
   );
 }
 
-export async function registerLike(postId, userId) {
+async function registerLike(postId, userId) {
   return db.query(
     `INSERT INTO likes ("postId", "userId")
     VALUES ($1, $2)`,
@@ -26,7 +26,7 @@ export async function registerLike(postId, userId) {
   );
 }
 
-export async function removeLike(postId, userId) {
+async function removeLike(postId, userId) {
   return db.query(
     `
     DELETE FROM likes
@@ -36,7 +36,7 @@ export async function removeLike(postId, userId) {
   );
 }
 
-export async function getLikes(postId, userId) {
+async function getLikes(postId, userId) {
   const userLiked = await db.query(
     `
     SELECT users.username FROM likes
@@ -60,7 +60,7 @@ export async function getLikes(postId, userId) {
   return { userLiked, allLikes };
 }
 
-export async function countLikes(postId) {
+async function countLikes(postId) {
   const likes = await db.query(
     `
     SELECT COUNT(*) FROM likes
@@ -72,7 +72,7 @@ export async function countLikes(postId) {
   return likes.rows[0].count;
 }
 
-export async function removePostLikes(postId) {
+async function removePostLikes(postId) {
   return db.query(
     `
         DELETE FROM likes
@@ -121,5 +121,11 @@ export const postRepository = {
    getPostById,
    editPost,
    getPostsHashtag,
-   deletePost
+   deletePost,
+   createPost,
+   registerLike,
+   removeLike,
+   getLikes,
+   countLikes,
+   removePostLikes
 };

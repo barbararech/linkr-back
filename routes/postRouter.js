@@ -19,11 +19,13 @@ const postRouter = Router();
 postRouter.post('/post', tokenValidationMiddleware, publishPost);
 postRouter.post('/like', tokenValidationMiddleware, likePost);
 postRouter.post('/dislike', tokenValidationMiddleware, dislikePost);
+
 postRouter.get('/likes/:postId', tokenValidationMiddleware, returnLikes);
 postRouter.get("/timeline", tokenValidationMiddleware, getPosts);
 postRouter.get('/hashtag/:hashtag', tokenValidationMiddleware, getPostsHashtag);
 
 postRouter.put('/post/:id',schemaValidator(postSchema),tokenValidationMiddleware, validatePostEdit, editPost)
+
 postRouter.delete('/post/:id', tokenValidationMiddleware, validatePostEdit, deletePost)
 
 export default postRouter;

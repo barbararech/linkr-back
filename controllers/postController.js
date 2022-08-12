@@ -1,11 +1,3 @@
-import {
-  createPost,
-  registerLike,
-  removeLike,
-  getLikes,
-  countLikes,
-  removePostLikes,
-} from "../repositories/postRepository.js";
 import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
@@ -15,7 +7,7 @@ export async function publishPost(req, res) {
   console.log(req.body);
   try {
     const urlInfo = await urlMetadata(req.body.url, { descriptionLength: 200 });
-    await createPost(
+    await postRepository.createPost(
       req.body.url,
       req.body.text,
       res.locals.id,
@@ -35,7 +27,7 @@ export async function likePost(req, res) {
   const { userId } = res.locals;
 
   try {
-    await registerLike(postId, userId);
+    await postRepository.registerLike(postId, userId);
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
@@ -48,7 +40,7 @@ export async function dislikePost(req, res) {
   const { userId } = res.locals;
 
   try {
-    await removeLike(postId, userId);
+    await postRepository.removeLike(postId, userId);
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
@@ -63,8 +55,11 @@ export async function returnLikes(req, res) {
   let liked = false;
 
   try {
-    const { userLiked, allLikes } = await getLikes(postId, userId);
-    const likes = await countLikes(postId);
+    const { userLiked, allLikes } = await postRepository.getLikes(
+      postId,
+      userId
+    );
+    const likes = await postRepository.countLikes(postId);
     if (userLiked.rows.length > 0) {
       liked = true;
       allLikes.rows.unshift({ username: "Você" });
@@ -76,10 +71,9 @@ export async function returnLikes(req, res) {
   }
 }
 
-
-export async function getPosts (req, res){
-    try{
-        const posts = await postRepository.getPosts()
+export async function getPosts(req, res) {
+  try {
+    const posts = await postRepository.getPosts();
 
     if (posts.rowCount === 0) {
       res.status(404).send("There are no posts yet");
@@ -91,13 +85,13 @@ export async function getPosts (req, res){
   }
 }
 
-export async function editPost( req, res) {
-  try{
-    const id = res.locals.postId
-    const text = req.body.text
-    await postRepository.editPost(id,text)
-    res.status(200).send("atualizado")
-  }catch(err){
+export async function editPost(req, res) {
+  try {
+    const id = res.locals.postId;
+    const text = req.body.text;
+    await postRepository.editPost(id, text);
+    res.status(200).send("atualizado");
+  } catch (err) {
     console.error(err);
     res.sendStatus(500);
   }
@@ -118,12 +112,12 @@ export async function getPostsHashtag(req, res) {
   }
 }
 
-export async function deletePost(req, res){
-  try{
-    const id = res.locals.postId
-    await postRepository.deletePost(id)
-    res.status(204).send("deletado")
-  }catch(err){
+export async function deletePost(req, res) {
+  try {
+    const id = res.locals.postId;
+    await postRepository.deletePost(id);
+    res.status(204).send("deletado");
+  } catch (err) {
     console.error(err);
     res.sendStatus(500);
   }
