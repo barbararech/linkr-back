@@ -6,7 +6,8 @@ import {
   returnLikes,
   getPosts,
   getPostsHashtag,
-  editPost
+  editPost,
+  deletePost
 } from '../controllers/postController.js';
 import { tokenValidationMiddleware } from '../middlewares/tokenValidator.js';
 import { schemaValidator } from '../middlewares/schemaValidator.js';
@@ -23,5 +24,6 @@ postRouter.get("/timeline", tokenValidationMiddleware, getPosts);
 postRouter.get('/hashtag/:hashtag', tokenValidationMiddleware, getPostsHashtag);
 
 postRouter.put('/post/:id',schemaValidator(postSchema),tokenValidationMiddleware, validatePostEdit, editPost)
+postRouter.delete('/post/:id', tokenValidationMiddleware, validatePostEdit, deletePost)
 
 export default postRouter;

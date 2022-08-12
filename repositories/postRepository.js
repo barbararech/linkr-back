@@ -112,10 +112,14 @@ async function getPostsHashtag(hashtag) {
         ORDER BY "createdAt" DESC LIMIT 20`);
 }
 
+async function deletePost(id){
+  db.query(`DELETE FROM posts WHERE id = $1`, [id])
+}
+
 export const postRepository = {
    getPosts,
    getPostById,
    editPost,
    getPostsHashtag,
-
+   deletePost
 };

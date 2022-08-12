@@ -94,9 +94,7 @@ export async function getPosts (req, res){
 export async function editPost( req, res) {
   try{
     const id = res.locals.postId
-    const userId = res.locals.id
     const text = req.body.text
-    console.log(userId)
     await postRepository.editPost(id,text)
     res.status(200).send("atualizado")
   }catch(err){
@@ -120,3 +118,13 @@ export async function getPostsHashtag(req, res) {
   }
 }
 
+export async function deletePost(req, res){
+  try{
+    const id = res.locals.postId
+    await postRepository.deletePost(id)
+    res.status(204).send("deletado")
+  }catch(err){
+    console.error(err);
+    res.sendStatus(500);
+  }
+}
