@@ -76,16 +76,30 @@ export async function returnLikes(req, res) {
   }
 }
 
-export async function getPosts(req, res) {
-  try {
-    const posts = await postRepository.getPosts();
-    const postsArr = [];
+
+export async function getPosts (req, res){
+    try{
+        const posts = await postRepository.getPosts()
 
     if (posts.rowCount === 0) {
       res.status(404).send("There are no posts yet");
     }
     res.status(200).send(posts.rows);
   } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+}
+
+export async function editPost( req, res) {
+  try{
+    const id = res.locals.postId
+    const userId = res.locals.id
+    const text = req.body.text
+    console.log(userId)
+    await postRepository.editPost(id,text)
+    res.status(200).send("atualizado")
+  }catch(err){
     console.error(err);
     res.sendStatus(500);
   }
@@ -105,3 +119,4 @@ export async function getPostsHashtag(req, res) {
     res.status(500).send(err);
   }
 }
+

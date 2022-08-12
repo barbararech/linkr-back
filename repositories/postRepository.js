@@ -89,6 +89,15 @@ async function getPosts() {
     ORDER BY "createdAt" DESC LIMIT 20`);
 }
 
+
+async function getPostById(id){
+  return db.query(`SELECT * FROM posts WHERE id = $1`, [id] )
+}
+  
+async function editPost(id, text){
+  db.query(`UPDATE posts SET article = $1 WHERE id = $2`, [text, id])
+}
+
 async function getPostsHashtag(hashtag) {
   return db.query(`SELECT p.*, u."pictureUrl", u.username, 
     ht.name AS "hashtagName"
@@ -104,6 +113,9 @@ async function getPostsHashtag(hashtag) {
 }
 
 export const postRepository = {
-  getPosts,
-  getPostsHashtag,
+   getPosts,
+   getPostById,
+   editPost,
+   getPostsHashtag,
+
 };
