@@ -1,4 +1,4 @@
-import db from "../database/db.js";
+import db from '../database/db.js';
 
 async function addUser(email, passwordEncrypted, username, pictureUrl) {
   return db.query(
@@ -25,6 +25,20 @@ async function getUserPicById(id) {
   SELECT "pictureUrl"
   FROM users
   WHERE id = $1`,
+    [id]
+  );
+}
+
+export async function getPosts(id) {
+  return connection.query(
+    `
+  SELECT posts.id, link, article, "userId", "createdAt", "urlTitle", "urlDescription", "urlImage"
+  FROM posts
+  JOIN users
+  ON posts."userId" = users.id
+  WHERE users.id = $1
+  ORDER BY posts."createdAt" DESC
+  LIMIT 20`,
     [id]
   );
 }
