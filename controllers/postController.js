@@ -2,12 +2,12 @@ import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
 export async function publishPost(req, res) {
-  //const { link, article } = req.body;
-  //const { userId } = res.locals;
-  console.log(req.body);
+  const text = req.body.text
   try {
     const urlInfo = await urlMetadata(req.body.url, { descriptionLength: 200 });
-    await postRepository.createPost(
+
+
+    const postId = await postRepository.createPost(
       req.body.url,
       req.body.text,
       res.locals.id,
@@ -15,6 +15,22 @@ export async function publishPost(req, res) {
       urlInfo.description,
       urlInfo.image
     );
+
+    if(text.includes('#')){
+      const teste = text.split(' ')
+      const hashtags = teste.filter((t)=> t[0]==="#")
+      
+      for(let i =0; i< hashtags.length; i++ ){
+        const word = hashtags[i].replace('#','')
+        const check = await postRepository.getHashtagsByName(word)
+        const newHashtag = ""
+        if( check.rowCount === 0){
+          newHashtag = await postRepository.createHashtag(word)
+          await postRepository.createPostHashtags(postId.rows[0].id, newHashtag.rows[0].id)
+        }
+        await postRepository.createPostHashtags(postId.rows[0].id, check.rows[0].id)
+      }
+    }
     res.sendStatus(201);
   } catch (error) {
     console.log(error);

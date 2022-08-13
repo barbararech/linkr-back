@@ -8,14 +8,24 @@ async function createPost(
   urlDescription,
   urlImage
 ) {
-  console.log(link);
   return db.query(
     `
     INSERT INTO posts (link, article, "userId", "urlTitle", "urlDescription", "urlImage")
-    VALUES ($1, $2, $3, $4, $5, $6)
+    VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;
     `,
     [link, article, userId, urlTitle, urlDescription, urlImage]
   );
+}
+
+async function getHashtagsByName(name){
+  return db.query(`SELECT * FROM hashtags WHERE name = $1`,[name])
+}
+async function createHashtag(name){
+  return db.query(`INSERT INTO hashtags (name) VALUES ($1) RETURNING id`, [name])
+}
+
+async function createPostHashtags(postId, hashtagId){
+  return db.query(`INSERT INTO "postHashtag" ("postId", "hashtagId") VALUES ($1, $2)`, [postId, hashtagId])
 }
 
 async function registerLike(postId, userId) {
@@ -143,5 +153,8 @@ export const postRepository = {
    getLikes,
    countLikes,
    removePostLikes,
-   removePostHashtags
+   removePostHashtags,
+   createHashtag,
+   createPostHashtags,
+   getHashtagsByName
 };
