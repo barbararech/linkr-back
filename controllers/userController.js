@@ -3,9 +3,9 @@ import { userRepository } from "../repositories/userRepositories.js";
 export async function getUsers(req, res) {
   try {
     const result = await userRepository.getAllUsers();
-    res.status(200).send(result.rows);
+    return res.status(200).send(result.rows);
   } catch (e) {
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
@@ -16,21 +16,20 @@ export async function getUserPic(req, res) {
     if (result.rowCount === 0) {
       return res.sendStatus(404);
     }
-    res.status(200).send(result.rows[0]);
+    return res.status(200).send(result.rows[0]);
   } catch (e) {
     console.error(e);
-    res.status(500).send("Erro de conexão com o servidor");
+    return res.status(500).send("Erro de conexão com o servidor");
   }
 }
 
-export async function getUserId(req, res){
-  
-  try{
-    const id = {id: res.locals.id}
-    res.status(200).send(id)
-  }catch(err){
-        console.error(err);
-    res.status(500).send("Erro de conexão com o servidor");
+export async function getUserId(req, res) {
+  try {
+    const id = { id: res.locals.id };
+    return res.status(200).send(id);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Erro de conexão com o servidor");
   }
 }
 
@@ -60,3 +59,4 @@ export async function getUserNameById(req, res){
     res.status(500).send("Erro de conexão com o servidor");
   }
 }
+
