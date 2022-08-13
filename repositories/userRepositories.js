@@ -29,10 +29,23 @@ async function getUserPicById(id) {
   );
 }
 
+async function getPostsbyUser(id) {
+  return db.query(`SELECT p.*, u."pictureUrl", u.username FROM posts p
+  JOIN users u
+  ON p."userId" = u.id
+  WHERE u.id = $1
+  ORDER BY "createdAt" DESC LIMIT 20`, [id]);
+}
+
+async function getUserNameById(id){
+  return db.query (`SELECT username FROM users WHERE id=$1`, [id])
+}
 export const userRepository = {
   addUser,
   getAllUsers,
   getUserByEmail,
   getUserById,
   getUserPicById,
+  getPostsbyUser,
+  getUserNameById
 };
