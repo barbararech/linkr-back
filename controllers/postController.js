@@ -25,7 +25,8 @@ export async function publishPost(req, res) {
 export async function likePost(req, res) {
   const { postId } = req.params;
   const { userId } = res.locals;
-
+  console.log(postId)
+  console.log(userId)
   try {
     await postRepository.registerLike(postId, userId);
     res.sendStatus(201);

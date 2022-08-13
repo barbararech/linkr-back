@@ -17,8 +17,8 @@ import { validatePostEdit } from '../middlewares/postValidator.js';
 const postRouter = Router();
 
 postRouter.post('/post', tokenValidationMiddleware, publishPost);
-postRouter.post('/like', tokenValidationMiddleware, likePost);
-postRouter.post('/dislike', tokenValidationMiddleware, dislikePost);
+postRouter.post('/like/:postId', tokenValidationMiddleware, likePost);
+postRouter.post('/dislike/:postId', tokenValidationMiddleware, dislikePost);
 
 postRouter.get('/likes/:postId', tokenValidationMiddleware, returnLikes);
 postRouter.get("/timeline", tokenValidationMiddleware, getPosts);
