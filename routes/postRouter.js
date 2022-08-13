@@ -12,7 +12,7 @@ import {
 import { tokenValidationMiddleware } from '../middlewares/tokenValidator.js';
 import { schemaValidator } from '../middlewares/schemaValidator.js';
 import postSchema from '../schemas/postSchema.js';
-import { validatePostEdit } from '../middlewares/postValidator.js';
+import { validatePostDeletion, validatePostEdit } from '../middlewares/postValidator.js';
 
 const postRouter = Router();
 
@@ -26,6 +26,6 @@ postRouter.get('/hashtag/:hashtag', tokenValidationMiddleware, getPostsHashtag);
 
 postRouter.put('/post/:id',schemaValidator(postSchema),tokenValidationMiddleware, validatePostEdit, editPost)
 
-postRouter.delete('/post/:id', tokenValidationMiddleware, validatePostEdit, deletePost)
+postRouter.delete('/post/:id', tokenValidationMiddleware, validatePostDeletion, deletePost)
 
 export default postRouter;
