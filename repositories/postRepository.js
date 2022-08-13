@@ -91,7 +91,12 @@ async function getPosts() {
 
 
 async function getPostById(id){
-  return db.query(`SELECT * FROM posts WHERE id = $1`, [id] )
+  return db.query(`SELECT posts.*, COUNT(likes.id) AS "postLikes", COUNT("postHashtag".id) AS "hashtags"
+  FROM posts
+  LEFT JOIN "postHashtag" ON "postHashtag"."postId" = posts.id
+  LEFT JOIN likes ON likes."postId" = posts.id
+  WHERE posts.id = $1
+  GROUP BY posts.id`, [id] )
 }
   
 async function editPost(id, text){
@@ -116,6 +121,16 @@ async function deletePost(id){
   db.query(`DELETE FROM posts WHERE id = $1`, [id])
 }
 
+async function removePostHashtags(postId) {
+  return db.query(
+    `
+        DELETE FROM "postHashtag"
+        WHERE "postId" = $1
+    `,
+    [postId]
+  );
+}
+
 export const postRepository = {
    getPosts,
    getPostById,
@@ -127,5 +142,6 @@ export const postRepository = {
    removeLike,
    getLikes,
    countLikes,
-   removePostLikes
+   removePostLikes,
+   removePostHashtags
 };

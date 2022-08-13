@@ -116,6 +116,17 @@ export async function getPostsHashtag(req, res) {
 export async function deletePost(req, res) {
   try {
     const id = res.locals.postId;
+    const postLikes = res.locals.postLikes;
+    const hashtags = res.locals.hashtags;
+
+    if(postLikes > 0){
+    await postRepository.removePostLikes(id)
+    }
+
+    if(hashtags > 0){
+    await postRepository.removePostHashtags(id)
+    }
+    
     await postRepository.deletePost(id);
     res.status(204).send("deletado");
   } catch (err) {
