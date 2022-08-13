@@ -63,7 +63,7 @@ async function getLikes(postId, userId) {
 async function countLikes(postId) {
   const likes = await db.query(
     `
-    SELECT COUNT(*) FROM likes
+    SELECT COUNT(*)::int FROM likes
     WHERE "postId" = $1    
   `,
     [postId]
