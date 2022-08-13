@@ -24,7 +24,7 @@ export async function publishPost(req, res) {
 
 export async function likePost(req, res) {
   const { postId } = req.params;
-  const { userId } = res.locals;
+  const userId  = res.locals.id;
   console.log(postId)
   console.log(userId)
   try {
@@ -38,7 +38,7 @@ export async function likePost(req, res) {
 
 export async function dislikePost(req, res) {
   const { postId } = req.params;
-  const { userId } = res.locals;
+  const userId  = res.locals.id;
 
   try {
     await postRepository.removeLike(postId, userId);
@@ -51,7 +51,7 @@ export async function dislikePost(req, res) {
 
 export async function returnLikes(req, res) {
   const { postId } = req.params;
-  const { userId } = res.locals;
+  const userId  = res.locals.id;
 
   let liked = false;
 
