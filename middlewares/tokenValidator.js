@@ -2,10 +2,14 @@ import jwt from "jsonwebtoken";
 
 export async function tokenValidationMiddleware(req, res, next) {
   const authorization = req.headers.authorization;
+  console.log(authorization)
   const token = authorization?.replace("Bearer ", "").trim();
   const secretKey = process.env.JWT_SECRET;
+  console.log(secretKey)
+
   try {
     const { id } = jwt.verify(token, secretKey);
+    console.log(id)
     res.locals.id = id;
     next();
   } catch (error) {
