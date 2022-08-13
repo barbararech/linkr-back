@@ -24,34 +24,34 @@ export async function publishPost(req, res) {
 
 export async function likePost(req, res) {
   const { postId } = req.params;
-  const userId  = res.locals.id;
-  console.log(postId)
-  console.log(userId)
+  const userId = res.locals.id;
+  console.log(postId);
+  console.log(userId);
   try {
     await postRepository.registerLike(postId, userId);
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
 export async function dislikePost(req, res) {
   const { postId } = req.params;
-  const userId  = res.locals.id;
+  const userId = res.locals.id;
 
   try {
     await postRepository.removeLike(postId, userId);
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
 export async function returnLikes(req, res) {
   const { postId } = req.params;
-  const userId  = res.locals.id;
+  const userId = res.locals.id;
 
   let liked = false;
 
@@ -65,10 +65,10 @@ export async function returnLikes(req, res) {
       liked = true;
       allLikes.rows.unshift({ username: "Você" });
     }
-    res.json({ likesUsers: allLikes.rows, liked, likes });
+    return res.json({ likesUsers: allLikes.rows, liked, likes });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
@@ -79,10 +79,10 @@ export async function getPosts(req, res) {
     if (posts.rowCount === 0) {
       res.status(404).send("There are no posts yet");
     }
-    res.status(200).send(posts.rows);
+    return res.status(200).send(posts.rows);
   } catch (err) {
     console.error(err);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
@@ -91,10 +91,10 @@ export async function editPost(req, res) {
     const id = res.locals.postId;
     const text = req.body.text;
     await postRepository.editPost(id, text);
-    res.status(200).send("atualizado");
+    return res.status(200).send("atualizado");
   } catch (err) {
     console.error(err);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
@@ -104,12 +104,12 @@ export async function getPostsHashtag(req, res) {
     const posts = await postRepository.getPostsHashtag(hashtag);
 
     if (posts.rowCount === 0) {
-      res.status(404).send("There are no posts yet");
+      return res.status(404).send("There are no posts yet");
     }
-    res.status(200).send(posts.rows);
+    return res.status(200).send(posts.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send(err);
+    return res.status(500).send(err);
   }
 }
 
@@ -117,9 +117,9 @@ export async function deletePost(req, res) {
   try {
     const id = res.locals.postId;
     await postRepository.deletePost(id);
-    res.status(204).send("deletado");
+    return res.status(204).send("deletado");
   } catch (err) {
     console.error(err);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
