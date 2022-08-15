@@ -23,15 +23,18 @@ export async function publishPost(req, res) {
       for(let i =0; i< hashtags.length; i++ ){
         const word = hashtags[i].replace('#','')
         const check = await postRepository.getHashtagsByName(word)
-        const newHashtag = ""
         if( check.rowCount === 0){
-          newHashtag = await postRepository.createHashtag(word) 
+          const newHashtag = await postRepository.createHashtag(word)
+          console.log(newHashtag) 
           await postRepository.createPostHashtags(postId.rows[0].id, newHashtag.rows[0].id)
         }
-        await postRepository.createPostHashtags(postId.rows[0].id, check.rows[0].id)
+
+        if (check.rowCount > 0){
+          await postRepository.createPostHashtags(postId.rows[0].id, check.rows[0].id)
+        }
       }
     }
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -41,8 +44,6 @@ export async function publishPost(req, res) {
 export async function likePost(req, res) {
   const { postId } = req.params;
   const userId = res.locals.id;
-  console.log(postId);
-  console.log(userId);
   try {
     await postRepository.registerLike(postId, userId);
     return res.sendStatus(201);
@@ -106,7 +107,29 @@ export async function editPost(req, res) {
   try {
     const id = res.locals.postId;
     const text = req.body.text;
+
+    await postRepository.removePostHashtags(id)
     await postRepository.editPost(id, text);
+
+    if(text.includes('#')){
+      const teste = text.split(' ')
+      const hashtags = teste.filter((t)=> t[0]==="#")
+      
+      for(let i =0; i< hashtags.length; i++ ){
+        const word = hashtags[i].replace('#','')
+        const check = await postRepository.getHashtagsByName(word)
+        if( check.rowCount === 0){
+          const newHashtag = await postRepository.createHashtag(word)
+          console.log(newHashtag) 
+          await postRepository.createPostHashtags(id, newHashtag.rows[0].id)
+        }
+
+        if (check.rowCount > 0){
+          await postRepository.createPostHashtags(id, check.rows[0].id)
+        }
+      }
+    }
+
     return res.status(200).send("atualizado");
   } catch (err) {
     console.error(err);
