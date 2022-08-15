@@ -2,10 +2,9 @@ import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
 export async function publishPost(req, res) {
-  const text = req.body.text
+  const text = req.body.text;
   try {
     const urlInfo = await urlMetadata(req.body.url, { descriptionLength: 200 });
-
 
     const postId = await postRepository.createPost(
       req.body.url,
@@ -16,22 +15,31 @@ export async function publishPost(req, res) {
       urlInfo.image
     );
 
-    if(text.includes('#')){
-      const teste = text.split(' ')
-      const hashtags = teste.filter((t)=> t[0]==="#")
-      
-      for(let i =0; i< hashtags.length; i++ ){
-        const word = hashtags[i].replace('#','')
-        const check = await postRepository.getHashtagsByName(word)
-        const newHashtag = ""
-        if( check.rowCount === 0){
-          newHashtag = await postRepository.createHashtag(word) 
-          await postRepository.createPostHashtags(postId.rows[0].id, newHashtag.rows[0].id)
+    if (text.includes("#")) {
+      const teste = text.split(" ");
+      const hashtags = teste.filter((t) => t[0] === "#");
+
+      for (let i = 0; i < hashtags.length; i++) {
+        const word = hashtags[i].replace("#", "");
+        const check = await postRepository.getHashtagsByName(word);
+        const newHashtag = "";
+
+        if (check.rowCount === 0) {
+          newHashtag = await postRepository.createHashtag(word);
+          await postRepository.createPostHashtags(
+            postId.rows[0].id,
+            newHashtag.rows[0].id
+          );
         }
-        await postRepository.createPostHashtags(postId.rows[0].id, check.rows[0].id)
+
+        await postRepository.createPostHashtags(
+          postId.rows[0].id,
+          check.rows[0].id
+        );
       }
+      return res.sendStatus(201);
     }
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -135,14 +143,14 @@ export async function deletePost(req, res) {
     const postLikes = res.locals.postLikes;
     const hashtags = res.locals.hashtags;
 
-    if(postLikes > 0){
-    await postRepository.removePostLikes(id)
+    if (postLikes > 0) {
+      await postRepository.removePostLikes(id);
     }
 
-    if(hashtags > 0){
-    await postRepository.removePostHashtags(id)
+    if (hashtags > 0) {
+      await postRepository.removePostHashtags(id);
     }
-    
+
     await postRepository.deletePost(id);
     return res.status(204).send("deletado");
   } catch (err) {
