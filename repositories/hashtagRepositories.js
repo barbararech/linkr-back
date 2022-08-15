@@ -8,7 +8,8 @@ async function getTrending() {
     JOIN "postHashtag" 
     ON hashtags.id = "postHashtag"."hashtagId"
     GROUP BY "hashtag"
-    ORDER BY "hashtagUsage" DESC;`);
+    ORDER BY "hashtagUsage" DESC
+    LIMIT 10;`);
 }
 
 export const hashtagRepository = {
