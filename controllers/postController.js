@@ -25,8 +25,8 @@ export async function publishPost(req, res) {
         const check = await postRepository.getHashtagsByName(word)
         const newHashtag = ""
         if( check.rowCount === 0){
-          newHashtag = await postRepository.createHashtag(word)
-          //await postRepository.createPostHashtags(postId.rows[0].id, newHashtag.rows[0].id)
+          newHashtag = await postRepository.createHashtag(word) 
+          await postRepository.createPostHashtags(postId.rows[0].id, newHashtag.rows[0].id)
         }
         await postRepository.createPostHashtags(postId.rows[0].id, check.rows[0].id)
       }
