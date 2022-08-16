@@ -8,7 +8,7 @@ async function addUser(email, passwordEncrypted, username, pictureUrl) {
 }
 
 async function getAllUsers() {
-  return db.query(`SELECT * FROM "users"`);
+  return db.query(`SELECT * FROM users `);
 }
 
 async function getUserByEmail(email) {
@@ -40,6 +40,11 @@ async function getPostsbyUser(id) {
 async function getUserNameById(id){
   return db.query (`SELECT username FROM users WHERE id=$1`, [id])
 }
+
+async function getUsersBySearch(username){
+  return db.query(` SELECT * FROM users WHERE username ILIKE $1 ` , [`${username}%`])
+}
+
 export const userRepository = {
   addUser,
   getAllUsers,
@@ -47,5 +52,6 @@ export const userRepository = {
   getUserById,
   getUserPicById,
   getPostsbyUser,
-  getUserNameById
+  getUserNameById,
+  getUsersBySearch
 };

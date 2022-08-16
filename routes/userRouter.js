@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUsers, getUserPic, getUserId, getUsersPosts, getUserNameById } from "../controllers/userController.js";
+import { getUsers, getUserPic, getUserId, getUsersPosts, getUserNameById, getUsersBySearch } from "../controllers/userController.js";
 import { tokenValidationMiddleware } from '../middlewares/tokenValidator.js';
 
 const userRouter = Router();
@@ -9,5 +9,6 @@ userRouter.get("/pictureUrl", tokenValidationMiddleware, getUserPic);
 userRouter.get("/userId", tokenValidationMiddleware, getUserId);
 userRouter.get("/user/:id", tokenValidationMiddleware, getUsersPosts);
 userRouter.get("/username/:id", getUserNameById);
+userRouter.post("/search", getUsersBySearch);
 
 export default userRouter;
