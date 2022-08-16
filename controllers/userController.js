@@ -60,3 +60,12 @@ export async function getUserNameById(req, res){
   }
 }
 
+export async function getUsersBySearch(req, res) {
+  const username = req.body.username
+  try {
+    const result = await userRepository.getUsersBySearch(username);
+    return res.status(200).send(result.rows);
+  } catch (e) {
+    return res.sendStatus(500);
+  }
+}
