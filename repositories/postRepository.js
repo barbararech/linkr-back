@@ -1,15 +1,14 @@
 //import { func } from "joi";
 import db from "../database/db.js";
 
-async function createComment(comment, postId, userId){
-
+async function createComment(comment, postId, userId) {
   return db.query(
-  `
+    `
   INSERT INTO comments (comment, "postId", "userId")
   VALUES ($1, $2, $3)
   `,
-  [comment, postId, userId]
-  )
+    [comment, postId, userId]
+  );
 }
 
 async function createPost(
@@ -29,15 +28,20 @@ async function createPost(
   );
 }
 
-async function getHashtagsByName(name){
-  return db.query(`SELECT * FROM hashtags WHERE name = $1`,[name])
+async function getHashtagsByName(name) {
+  return db.query(`SELECT * FROM hashtags WHERE name = $1`, [name]);
 }
-async function createHashtag(name){
-  return db.query(`INSERT INTO hashtags (name) VALUES ($1) RETURNING id`, [name])
+async function createHashtag(name) {
+  return db.query(`INSERT INTO hashtags (name) VALUES ($1) RETURNING id`, [
+    name,
+  ]);
 }
 
-async function createPostHashtags(postId, hashtagId){
-  return db.query(`INSERT INTO "postHashtag" ("postId", "hashtagId") VALUES ($1, $2)`, [postId, hashtagId])
+async function createPostHashtags(postId, hashtagId) {
+  return db.query(
+    `INSERT INTO "postHashtag" ("postId", "hashtagId") VALUES ($1, $2)`,
+    [postId, hashtagId]
+  );
 }
 
 async function registerLike(postId, userId) {
@@ -79,25 +83,34 @@ async function removePostLikes(postId) {
   );
 }
 
-async function getPosts() {
-  return db.query(`SELECT p.*, u."pictureUrl", u.username FROM posts p
+async function getPosts(id) {
+  return db.query(
+    `SELECT p.*, u."pictureUrl", u.username, "followingId"
+	  FROM posts p
     JOIN users u
     ON p."userId" = u.id
-    ORDER BY "createdAt" DESC LIMIT 20`);
+	  JOIN following f
+	  ON f."followingId" = p."userId"
+	  WHERE f."userId" = $1
+    ORDER BY "createdAt" `,
+    [id] 
+  );
 }
 
-
-async function getPostById(id){
-  return db.query(`SELECT posts.*, COUNT(likes.id) AS "postLikes", COUNT("postHashtag".id) AS "hashtags"
+async function getPostById(id) {
+  return db.query(
+    `SELECT posts.*, COUNT(likes.id) AS "postLikes", COUNT("postHashtag".id) AS "hashtags"
   FROM posts
   LEFT JOIN "postHashtag" ON "postHashtag"."postId" = posts.id
   LEFT JOIN likes ON likes."postId" = posts.id
   WHERE posts.id = $1
-  GROUP BY posts.id`, [id] )
+  GROUP BY posts.id`,
+    [id]
+  );
 }
-  
-async function editPost(id, text){
-  db.query(`UPDATE posts SET article = $1 WHERE id = $2`, [text, id])
+
+async function editPost(id, text) {
+  db.query(`UPDATE posts SET article = $1 WHERE id = $2`, [text, id]);
 }
 
 async function getPostsHashtag(hashtag) {
@@ -114,8 +127,8 @@ async function getPostsHashtag(hashtag) {
         ORDER BY "createdAt" DESC LIMIT 20`);
 }
 
-async function deletePost(id){
-  db.query(`DELETE FROM posts WHERE id = $1`, [id])
+async function deletePost(id) {
+  db.query(`DELETE FROM posts WHERE id = $1`, [id]);
 }
 
 async function removePostHashtags(postId) {
@@ -143,5 +156,5 @@ export const postRepository = {
    createHashtag,
    createPostHashtags,
    getHashtagsByName,
-   createComment
+   createComment,
 };

@@ -1,22 +1,17 @@
 import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
-export async function createComment (req, res) {
-
+export async function createComment(req, res) {
   const comment = req.body.comment;
   const { postId } = req.params;
   const userId = res.locals.id;
 
   try {
-
     await postRepository.createComment(comment, postId, userId);
     return res.sendStatus(201);
-
   } catch (error) {
-
     console.log(error);
     return res.sendStatus(500);
-
   }
 }
 
@@ -34,21 +29,27 @@ export async function createPost(req, res) {
       urlInfo.image
     );
 
-    if(text.includes('#')){
-      const teste = text.split(' ')
-      const hashtags = teste.filter((t)=> t[0]==="#")
-      
-      for(let i =0; i< hashtags.length; i++ ){
-        const word = hashtags[i].replace('#','')
-        const check = await postRepository.getHashtagsByName(word)
-        if( check.rowCount === 0){
-          const newHashtag = await postRepository.createHashtag(word)
-          console.log(newHashtag) 
-          await postRepository.createPostHashtags(postId.rows[0].id, newHashtag.rows[0].id)
+    if (text.includes("#")) {
+      const teste = text.split(" ");
+      const hashtags = teste.filter((t) => t[0] === "#");
+
+      for (let i = 0; i < hashtags.length; i++) {
+        const word = hashtags[i].replace("#", "");
+        const check = await postRepository.getHashtagsByName(word);
+        if (check.rowCount === 0) {
+          const newHashtag = await postRepository.createHashtag(word);
+          console.log(newHashtag);
+          await postRepository.createPostHashtags(
+            postId.rows[0].id,
+            newHashtag.rows[0].id
+          );
         }
 
-        if (check.rowCount > 0){
-          await postRepository.createPostHashtags(postId.rows[0].id, check.rows[0].id)
+        if (check.rowCount > 0) {
+          await postRepository.createPostHashtags(
+            postId.rows[0].id,
+            check.rows[0].id
+          );
         }
       }
       return res.sendStatus(201);
@@ -111,10 +112,6 @@ export async function getLikes(req, res) {
 export async function getPosts(req, res) {
   try {
     const posts = await postRepository.getPosts();
-
-    if (posts.rowCount === 0) {
-      res.status(404).send("There are no posts yet");
-    }
     return res.status(200).send(posts.rows);
   } catch (err) {
     console.error(err);
@@ -127,24 +124,24 @@ export async function editPost(req, res) {
     const id = res.locals.postId;
     const text = req.body.text;
 
-    await postRepository.removePostHashtags(id)
+    await postRepository.removePostHashtags(id);
     await postRepository.editPost(id, text);
 
-    if(text.includes('#')){
-      const teste = text.split(' ')
-      const hashtags = teste.filter((t)=> t[0]==="#")
-      
-      for(let i =0; i< hashtags.length; i++ ){
-        const word = hashtags[i].replace('#','')
-        const check = await postRepository.getHashtagsByName(word)
-        if( check.rowCount === 0){
-          const newHashtag = await postRepository.createHashtag(word)
-          console.log(newHashtag) 
-          await postRepository.createPostHashtags(id, newHashtag.rows[0].id)
+    if (text.includes("#")) {
+      const teste = text.split(" ");
+      const hashtags = teste.filter((t) => t[0] === "#");
+
+      for (let i = 0; i < hashtags.length; i++) {
+        const word = hashtags[i].replace("#", "");
+        const check = await postRepository.getHashtagsByName(word);
+        if (check.rowCount === 0) {
+          const newHashtag = await postRepository.createHashtag(word);
+          console.log(newHashtag);
+          await postRepository.createPostHashtags(id, newHashtag.rows[0].id);
         }
 
-        if (check.rowCount > 0){
-          await postRepository.createPostHashtags(id, check.rows[0].id)
+        if (check.rowCount > 0) {
+          await postRepository.createPostHashtags(id, check.rows[0].id);
         }
       }
     }
