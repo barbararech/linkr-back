@@ -1,7 +1,7 @@
 import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
-export async function publishPost(req, res) {
+export async function createPost(req, res) {
   const text = req.body.text;
   try {
     const urlInfo = await urlMetadata(req.body.url, { descriptionLength: 200 });
