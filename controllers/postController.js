@@ -111,7 +111,8 @@ export async function getLikes(req, res) {
 
 export async function getPosts(req, res) {
   try {
-    const posts = await postRepository.getPosts();
+    const id = res.locals.id;
+    const posts = await postRepository.getPosts(id);
     return res.status(200).send(posts.rows);
   } catch (err) {
     console.error(err);
