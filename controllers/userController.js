@@ -69,7 +69,7 @@ export async function getUsersBySearch(req, res) {
   }
 }
 
-export async function getFollowingUsers(req, res) {
+export async function getFollowingUser(req, res) {
   try {
     const userId = res.locals.id;
     const followingUserId = req.params.id;
@@ -77,6 +77,17 @@ export async function getFollowingUsers(req, res) {
       userId,
       followingUserId
     );
+    return res.status(200).send(result.rows);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send(e);
+  }
+}
+
+export async function getFollowingUsers(req, res) {
+  try {
+    const userId = res.locals.id;
+    const result = await userRepository.getFollowingUsers(userId);
     return res.status(200).send(result.rows);
   } catch (e) {
     console.error(e);
