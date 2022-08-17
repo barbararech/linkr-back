@@ -57,6 +57,13 @@ async function getFollowingUser(userId, followingUserId) {
   );
 }
 
+async function getFollowingUsers(userId, followingUserId) {
+  return db.query(
+    `SELECT * FROM following WHERE "userId"=$1`,
+    [userId]
+  );
+}
+
 async function postFollowUser(userId, followingUserId) {
   console.log(userId)
   console.log(followingUserId)
@@ -84,6 +91,7 @@ export const userRepository = {
   getUserNameById,
   getUsersBySearch,
   getFollowingUser,
+  getFollowingUsers,
   postFollowUser,
   postUnfollowUser,
 };
