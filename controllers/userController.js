@@ -77,7 +77,6 @@ export async function getFollowingUsers(req, res) {
       userId,
       followingUserId
     );
-
     return res.status(200).send(result.rows);
   } catch (e) {
     console.error(e);
