@@ -8,7 +8,7 @@ import {
   getUsersBySearch,
   getFollowingUsers,
   FollowUser,
-  UnFollowUser
+  UnFollowUser,
 } from "../controllers/userController.js";
 import { tokenValidationMiddleware } from "../middlewares/tokenValidator.js";
 

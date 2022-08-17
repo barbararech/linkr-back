@@ -30,33 +30,41 @@ async function getUserPicById(id) {
 }
 
 async function getPostsbyUser(id) {
-  return db.query(`SELECT p.*, u."pictureUrl", u.username FROM posts p
+  return db.query(
+    `SELECT p.*, u."pictureUrl", u.username FROM posts p
   JOIN users u
   ON p."userId" = u.id
   WHERE u.id = $1
-  ORDER BY "createdAt" DESC LIMIT 20`, [id]);
+  ORDER BY "createdAt" DESC LIMIT 20`,
+    [id]
+  );
 }
 
-async function getUserNameById(id){
-  return db.query (`SELECT username FROM users WHERE id=$1`, [id])
+async function getUserNameById(id) {
+  return db.query(`SELECT username FROM users WHERE id=$1`, [id]);
 }
 
-async function getUsersBySearch(username){
-  return db.query(` SELECT * FROM users WHERE username ILIKE $1 ` , [`${username}%`])
+async function getUsersBySearch(username) {
+  return db.query(` SELECT * FROM users WHERE username ILIKE $1 `, [
+    `${username}%`,
+  ]);
 }
 
-async function getFollowingUser(userId, followingUserId){
-  return db.query (`SELECT * FROM following WHERE "userId"=$1 AND "followingId" = $2`, [userId, followingUserId])
+async function getFollowingUser(userId, followingUserId) {
+  return db.query(
+    `SELECT * FROM following WHERE "userId"=$1 AND "followingId" = $2`,
+    [userId, followingUserId]
+  );
 }
 
-async function FollowUser(userId, followingUserId){
+async function FollowUser(userId, followingUserId) {
   return db.query(
     `INSERT INTO "following" ("userId", "followingId") VALUES ($1, $2)`,
     [userId, followingUserId]
   );
 }
 
-async function UnfollowUser(userId, followingUserId){
+async function UnfollowUser(userId, followingUserId) {
   return db.query(
     `DELETE FROM "following" WHERE "userId" = $1 AND "followingId" = $2`,
     [userId, followingUserId]
@@ -71,8 +79,8 @@ export const userRepository = {
   getUserPicById,
   getPostsbyUser,
   getUserNameById,
-  getUsersBySearch, 
+  getUsersBySearch,
   getFollowingUser,
   FollowUser,
-  UnfollowUser
+  UnfollowUser,
 };
