@@ -19,7 +19,7 @@ userRouter.get("/pictureUrl", tokenValidationMiddleware, getUserPic);
 userRouter.get("/userId", tokenValidationMiddleware, getUserId);
 userRouter.get("/user/:id", tokenValidationMiddleware, getUsersPosts);
 userRouter.get("/userinfo/:id", tokenValidationMiddleware, getUserById);
-userRouter.get("/following", tokenValidationMiddleware, getFollowingUsers);
+userRouter.get("/following/:id", tokenValidationMiddleware, getFollowingUsers);
 userRouter.post("/search", getUsersBySearch);
 userRouter.post("/follow/:id", tokenValidationMiddleware, FollowUser);
 userRouter.post("/unfollow/:id", tokenValidationMiddleware, UnFollowUser);
