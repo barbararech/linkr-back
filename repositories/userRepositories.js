@@ -45,6 +45,24 @@ async function getUsersBySearch(username){
   return db.query(` SELECT * FROM users WHERE username ILIKE $1 ` , [`${username}%`])
 }
 
+async function getFollowingUser(userId, followingUserId){
+  return db.query (`SELECT * FROM users WHERE "userId"=$1 AND "followingId" = $2`, [userId, followingUserId])
+}
+
+async function FollowUser(userId, followingUserId){
+  return db.query(
+    `INSERT INTO "following" ("userId", "followingId") VALUES ($1, $2)`,
+    [userId, followingUserId]
+  );
+}
+
+async function UnfollowUser(userId, followingUserId){
+  return db.query(
+    `DELETE FROM "following" WHERE "userId" = $1 AND "followingId" = $2`,
+    [userId, followingUserId]
+  );
+}
+
 export const userRepository = {
   addUser,
   getAllUsers,
@@ -53,5 +71,8 @@ export const userRepository = {
   getUserPicById,
   getPostsbyUser,
   getUserNameById,
-  getUsersBySearch
+  getUsersBySearch, 
+  getFollowingUser,
+  FollowUser,
+  UnfollowUser
 };

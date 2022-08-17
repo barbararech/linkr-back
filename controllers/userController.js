@@ -47,32 +47,20 @@ export async function getUsersPosts(req, res) {
   }
 }
 
-export async function getUserNameById(req, res) {
-  try {
-    const id = req.params.id;
-    const username = await userRepository.getUserNameById(id);
-
-    res.status(200).send(username.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro de conexão com o servidor");
-  }
-}
-
 export async function getUserById(req, res) {
   try {
-    const { id } = res.locals;
-    console.log(id);
+    const id = req.params.id;
     const user = await userRepository.getUserById(id);
-    console.log(user);
+
     res.status(200).send(user.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro de conexão com o servidor");
   }
 }
+
 export async function getUsersBySearch(req, res) {
-  const username = req.body.username
+  const username = req.body.username;
   try {
     const result = await userRepository.getUsersBySearch(username);
     return res.status(200).send(result.rows);
@@ -80,3 +68,49 @@ export async function getUsersBySearch(req, res) {
     return res.sendStatus(500);
   }
 }
+
+export async function getFollowingUsers(req, res) {
+  try {
+    const userId = res.locals.id;
+    const followingUserId = req.params.id;
+    const result = await userRepository.getFollowingUser(
+      userId,
+      followingUserId
+    );
+
+    // if (result.rowCount === 0) {
+    //   return res.sendStatus(404);
+    // }
+    return res.status(200).send(result.rows);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send("Erro de conexão com o servidor");
+  }
+}
+
+export async function FollowUser(req, res) {
+  try {
+    const userId = res.locals.id;
+    const followingUserId = req.params.id;
+    await userRepository.FollowUser(userId, followingUserId);
+
+    return res.status(200);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send("Erro de conexão com o servidor");
+  }
+}
+
+export async function UnFollowUser(req, res) {
+  try {
+    const userId = res.locals.id;
+    const followingUserId = req.params.id;
+    await userRepository.UnfollowUser(userId, followingUserId);
+
+    return res.status(200);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send("Erro de conexão com o servidor");
+  }
+}
+
