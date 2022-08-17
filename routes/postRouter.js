@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  publishPost,
+  createPost,
   likePost,
   dislikePost,
   returnLikes,
@@ -11,12 +11,12 @@ import {
 } from '../controllers/postController.js';
 import { tokenValidationMiddleware } from '../middlewares/tokenValidator.js';
 import { schemaValidator } from '../middlewares/schemaValidator.js';
-import postSchema from '../schemas/postSchema.js';
+import {postSchema, createPostSchema} from '../schemas/postSchema.js';
 import { validatePostDeletion, validatePostEdit } from '../middlewares/postValidator.js';
 
 const postRouter = Router();
 
-postRouter.post('/post', tokenValidationMiddleware, publishPost);
+postRouter.post('/post', tokenValidationMiddleware, schemaValidator(createPostSchema),createPost);
 postRouter.post('/like/:postId', tokenValidationMiddleware, likePost);
 postRouter.post('/dislike/:postId', tokenValidationMiddleware, dislikePost);
 
