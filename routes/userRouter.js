@@ -4,9 +4,11 @@ import {
   getUserPic,
   getUserId,
   getUsersPosts,
-  getUserNameById,
   getUserById,
   getUsersBySearch,
+  getFollowingUsers,
+  FollowUser,
+  UnFollowUser
 } from "../controllers/userController.js";
 import { tokenValidationMiddleware } from "../middlewares/tokenValidator.js";
 
@@ -15,9 +17,10 @@ const userRouter = Router();
 userRouter.get("/users", getUsers);
 userRouter.get("/pictureUrl", tokenValidationMiddleware, getUserPic);
 userRouter.get("/userId", tokenValidationMiddleware, getUserId);
-userRouter.get("/user", tokenValidationMiddleware, getUserById);
 userRouter.get("/user/:id", tokenValidationMiddleware, getUsersPosts);
-userRouter.get("/username/:id", getUserNameById);
+userRouter.get("/userinfo/:id", tokenValidationMiddleware, getUserById);
+userRouter.get("/following", tokenValidationMiddleware, getFollowingUsers);
 userRouter.post("/search", getUsersBySearch);
-
+userRouter.post("/follow/:id", tokenValidationMiddleware, FollowUser);
+userRouter.post("/unfollow/:id", tokenValidationMiddleware, UnFollowUser);
 export default userRouter;
