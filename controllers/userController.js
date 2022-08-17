@@ -33,30 +33,41 @@ export async function getUserId(req, res) {
   }
 }
 
-export async function getUsersPosts(req, res){
-  try{
+export async function getUsersPosts(req, res) {
+  try {
     const id = req.params.id;
     const result = await userRepository.getPostsbyUser(id);
-    if(result.rowCount === 0){
-      return res.sendStatus(404)
+    if (result.rowCount === 0) {
+      return res.sendStatus(404);
     }
     res.status(200).send(result.rows);
-  }catch(e){
+  } catch (e) {
     console.error(e);
     res.status(500).send("Erro de conexão com o servidor");
   }
 }
 
-export async function getUserNameById(req, res){
-  
-  try{
-    const id = req.params.id
-    const username = await userRepository.getUserNameById(id)
+export async function getUserNameById(req, res) {
+  try {
+    const id = req.params.id;
+    const username = await userRepository.getUserNameById(id);
 
-    res.status(200).send(username.rows[0])
-  }catch(err){
-        console.error(err);
+    res.status(200).send(username.rows[0]);
+  } catch (err) {
+    console.error(err);
     res.status(500).send("Erro de conexão com o servidor");
   }
 }
 
+export async function getUserById(req, res) {
+  try {
+    const { id } = res.locals;
+    console.log(id);
+    const user = await userRepository.getUserById(id);
+    console.log(user);
+    res.status(200).send(user.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro de conexão com o servidor");
+  }
+}
