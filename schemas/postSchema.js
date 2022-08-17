@@ -8,4 +8,9 @@ const createPostSchema = joi.object({
   text: joi.any(),
   url: joi.string().uri().required()
 })
-export {postSchema, createPostSchema};
+
+const commentSchema = joi.object({
+  comment: joi.string().required()
+})
+
+export {postSchema, createPostSchema, commentSchema};
