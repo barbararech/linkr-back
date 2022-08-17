@@ -62,40 +62,15 @@ async function removeLike(postId, userId) {
   );
 }
 
-async function getLikes(postId, userId) {
-  const userLiked = await db.query(
+async function getLikes(postId) {
+return db.query(
     `
-    SELECT users.username FROM likes
+    SELECT users.username, users.id FROM likes
     JOIN users ON likes."userId" = users.id
-    WHERE likes."postId" = $1 AND likes."userId" = $2
-  `,
-    [postId, userId]
-  );
-
-  const allLikes = await db.query(
-    `
-    SELECT users.username FROM likes
-    JOIN users ON likes."userId" = users.id
-    WHERE "postId" = $1 AND "userId" != $2
-    ORDER BY likes.id DESC
-    LIMIT 2
-  `,
-    [postId, userId]
-  );
-
-  return { userLiked, allLikes };
-}
-
-async function countLikes(postId) {
-  const likes = await db.query(
-    `
-    SELECT COUNT(*)::int FROM likes
-    WHERE "postId" = $1    
+    WHERE likes."postId" = $1
   `,
     [postId]
   );
-
-  return likes.rows[0].count;
 }
 
 async function removePostLikes(postId) {
@@ -167,20 +142,19 @@ async function removePostHashtags(postId) {
 }
 
 export const postRepository = {
-  getPosts,
-  getPostById,
-  editPost,
-  getPostsHashtag,
-  deletePost,
-  createPost,
-  registerLike,
-  removeLike,
-  getLikes,
-  countLikes,
-  removePostLikes,
-  removePostHashtags,
-  createHashtag,
-  createPostHashtags,
-  getHashtagsByName,
-  createComment,
+   getPosts,
+   getPostById,
+   editPost,
+   getPostsHashtag,
+   deletePost,
+   createPost,
+   registerLike,
+   removeLike,
+   getLikes,
+   removePostLikes,
+   removePostHashtags,
+   createHashtag,
+   createPostHashtags,
+   getHashtagsByName,
+   createComment,
 };

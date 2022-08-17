@@ -62,49 +62,49 @@ export async function createPost(req, res) {
 }
 
 export async function likePost(req, res) {
-  const { postId } = req.params;
+  const postId = req.params.postId;
   const userId = res.locals.id;
-  try {
-    await postRepository.registerLike(postId, userId);
-    return res.sendStatus(201);
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-}
-
-export async function dislikePost(req, res) {
-  const { postId } = req.params;
-  const userId = res.locals.id;
+  const action = req.headers.action
 
   try {
-    await postRepository.removeLike(postId, userId);
-    return res.sendStatus(201);
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-}
-
-export async function returnLikes(req, res) {
-  const { postId } = req.params;
-  const userId = res.locals.id;
-
-  let liked = false;
-
-  try {
-    const { userLiked, allLikes } = await postRepository.getLikes(
-      postId,
-      userId
-    );
-    const likes = await postRepository.countLikes(postId);
-    if (userLiked.rows.length > 0) {
-      liked = true;
-      allLikes.rows.unshift({ username: "Você" });
+    if(action === "like") {
+      await postRepository.registerLike(postId, userId);
+      return res.sendStatus(201);
     }
-    return res.json({ likesUsers: allLikes.rows, liked, likes });
+
+    if(action === "dislike"){
+      await postRepository.removeLike(postId, userId);
+      return res.sendStatus(201);
+    }
+
   } catch (error) {
     console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+
+export async function getLikes(req, res) {
+  const postId = req.params.postId;
+  const userId = res.locals.id
+
+  let userLiked = false
+  let result = ""
+  try {
+    const likes  = await postRepository.getLikes(postId);
+    let check = likes.rows.find(u => (u.id === userId));
+    if(check!== undefined){
+      userLiked = true
+      const likesWithUser = likes.rows.filter(u=> u.id !== userId);
+      check.username = "Você"
+      likesWithUser.unshift(check)
+      result = {likes:likesWithUser, userLiked:userLiked}
+      return res.send(result);
+    }
+    result = {likes:likes.rows, userLiked:userLiked}
+    return res.send(result);
+  } catch (err) {
+    console.log(err);
     return res.sendStatus(500);
   }
 }

@@ -2,8 +2,7 @@ import { Router } from 'express';
 import {
   createPost,
   likePost,
-  dislikePost,
-  returnLikes,
+  getLikes,
   getPosts,
   getPostsHashtag,
   editPost,
@@ -19,9 +18,8 @@ const postRouter = Router();
 
 postRouter.post('/post', tokenValidationMiddleware, schemaValidator(createPostSchema),createPost);
 postRouter.post('/like/:postId', tokenValidationMiddleware, likePost);
-postRouter.post('/dislike/:postId', tokenValidationMiddleware, dislikePost);
 
-postRouter.get('/likes/:postId', tokenValidationMiddleware, returnLikes);
+postRouter.get('/likes/:postId', tokenValidationMiddleware, getLikes);
 postRouter.get("/timeline", tokenValidationMiddleware, getPosts);
 postRouter.get('/hashtag/:hashtag', tokenValidationMiddleware, getPostsHashtag);
 
