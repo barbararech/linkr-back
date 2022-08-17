@@ -1,4 +1,16 @@
+//import { func } from "joi";
 import db from "../database/db.js";
+
+async function createComment(comment, postId, userId){
+
+  return db.query(
+  `
+  INSERT INTO comments (comment, "postId", "userId")
+  VALUES ($1, $2, $3)
+  `,
+  [comment, postId, userId]
+  )
+}
 
 async function createPost(
   link,
@@ -156,5 +168,6 @@ export const postRepository = {
    removePostHashtags,
    createHashtag,
    createPostHashtags,
-   getHashtagsByName
+   getHashtagsByName,
+   createComment
 };

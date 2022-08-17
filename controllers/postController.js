@@ -1,6 +1,25 @@
 import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
+export async function createComment (req, res) {
+
+  const comment = req.body.comment;
+  const { postId } = req.params;
+  const userId = res.locals.id;
+
+  try {
+
+    await postRepository.createComment(comment, postId, userId);
+    return res.sendStatus(201);
+
+  } catch (error) {
+
+    console.log(error);
+    return res.sendStatus(500);
+
+  }
+}
+
 export async function createPost(req, res) {
   const text = req.body.text;
   try {
