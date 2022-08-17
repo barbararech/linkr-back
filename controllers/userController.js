@@ -85,7 +85,7 @@ export async function getFollowingUsers(req, res) {
     return res.status(200).send(result.rows);
   } catch (e) {
     console.error(e);
-    return res.status(500).send("Erro de conexão com o servidor");
+    return res.status(500).send(e);
   }
 }
 

@@ -46,7 +46,7 @@ async function getUsersBySearch(username){
 }
 
 async function getFollowingUser(userId, followingUserId){
-  return db.query (`SELECT * FROM users WHERE "userId"=$1 AND "followingId" = $2`, [userId, followingUserId])
+  return db.query (`SELECT * FROM following WHERE "userId"=$1 AND "followingId" = $2`, [userId, followingUserId])
 }
 
 async function FollowUser(userId, followingUserId){
