@@ -78,9 +78,10 @@ export async function getFollowingUsers(req, res) {
       followingUserId
     );
 
-    // if (result.rowCount === 0) {
-    //   return res.sendStatus(404);
-    // }
+    if (result.rowCount === 0) {
+      return res.sendStatus(404);
+    }
+
     return res.status(200).send(result.rows);
   } catch (e) {
     console.error(e);
@@ -113,4 +114,3 @@ export async function UnFollowUser(req, res) {
     return res.status(500).send("Erro de conexão com o servidor");
   }
 }
-
