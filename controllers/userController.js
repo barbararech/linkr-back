@@ -78,9 +78,9 @@ export async function getFollowingUsers(req, res) {
       followingUserId
     );
 
-    if (result.rowCount === 0) {
-      return res.sendStatus(404);
-    }
+    // if (result.rowCount === 0) {
+    //   return res.sendStatus(404);
+    // }
 
     return res.status(200).send(result.rows);
   } catch (e) {
