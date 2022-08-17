@@ -57,14 +57,17 @@ async function getFollowingUser(userId, followingUserId) {
   );
 }
 
-async function FollowUser(userId, followingUserId) {
+async function postFollowUser(userId, followingUserId) {
+  console.log(userId)
+  console.log(followingUserId)
+  
   return db.query(
     `INSERT INTO "following" ("userId", "followingId") VALUES ($1, $2)`,
     [userId, followingUserId]
   );
 }
 
-async function UnfollowUser(userId, followingUserId) {
+async function postUnfollowUser(userId, followingUserId) {
   return db.query(
     `DELETE FROM "following" WHERE "userId" = $1 AND "followingId" = $2`,
     [userId, followingUserId]
@@ -81,6 +84,6 @@ export const userRepository = {
   getUserNameById,
   getUsersBySearch,
   getFollowingUser,
-  FollowUser,
-  UnfollowUser,
+  postFollowUser,
+  postUnfollowUser,
 };

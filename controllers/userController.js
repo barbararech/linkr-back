@@ -87,23 +87,23 @@ export async function getFollowingUsers(req, res) {
 export async function FollowUser(req, res) {
   try {
     const userId = res.locals.id;
-    const followingUserId = req.params.id;
-    await userRepository.FollowUser(userId, followingUserId);
+    const followingUserId = parseInt(req.params.id);
+    await userRepository.postFollowUser(userId, followingUserId);
 
-    return res.status(200);
+    return res.sendStatus(200);
   } catch (e) {
     console.error(e);
-    return res.status(500).send("Erro de conexão com o servidor");
+    return res.sendStatus(500).send("Erro de conexão com o servidor");
   }
 }
 
 export async function UnFollowUser(req, res) {
   try {
     const userId = res.locals.id;
-    const followingUserId = req.params.id;
-    await userRepository.UnfollowUser(userId, followingUserId);
+    const followingUserId = parseInt(req.params.id);
+    await userRepository.postUnfollowUser(userId, followingUserId);
 
-    return res.status(200);
+    return res.sendStatus(200);
   } catch (e) {
     console.error(e);
     return res.status(500).send("Erro de conexão com o servidor");
