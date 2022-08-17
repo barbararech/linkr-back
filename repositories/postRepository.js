@@ -118,7 +118,7 @@ async function getPosts(id) {
 	  ON f."followingId" = p."userId"
 	  WHERE f."userId" = $1
     ORDER BY "createdAt" `,
-    [id]
+    [id] 
   );
 }
 
