@@ -1,6 +1,14 @@
 import { Router } from "express";
-import { getUsers, getUserPic, getUserId, getUsersPosts, getUserNameById, getUserById } from "../controllers/userController.js";
-import { tokenValidationMiddleware } from '../middlewares/tokenValidator.js';
+import {
+  getUsers,
+  getUserPic,
+  getUserId,
+  getUsersPosts,
+  getUserNameById,
+  getUserById,
+  getUsersBySearch,
+} from "../controllers/userController.js";
+import { tokenValidationMiddleware } from "../middlewares/tokenValidator.js";
 
 const userRouter = Router();
 
@@ -10,5 +18,6 @@ userRouter.get("/userId", tokenValidationMiddleware, getUserId);
 userRouter.get("/user", tokenValidationMiddleware, getUserById);
 userRouter.get("/user/:id", tokenValidationMiddleware, getUsersPosts);
 userRouter.get("/username/:id", getUserNameById);
+userRouter.post("/search", getUsersBySearch);
 
 export default userRouter;
