@@ -2,7 +2,7 @@ import db from "../database/db.js";
 
 async function addUser(email, passwordEncrypted, username, pictureUrl) {
   return db.query(
-    `INSERT INTO "users" (email, password, username, "pictureUrl") VALUES ($1, $2, $3, $4)`,
+    `INSERT INTO "users" (email, password, username, "pictureUrl") VALUES ($1, $2, $3, $4) RETURNING id`,
     [email, passwordEncrypted, username, pictureUrl]
   );
 }

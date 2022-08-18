@@ -13,8 +13,9 @@ export async function signUp(req, res) {
       return res.sendStatus(409);
     }
 
-    await userRepository.addUser(email, passwordEncrypted, username, pictureUrl);
-
+   const id = await userRepository.addUser(email, passwordEncrypted, username, pictureUrl);
+   console.log(id.rows[0].id)
+   await userRepository.postFollowUser(id.rows[0].id, id.rows[0].id)
     return res.sendStatus(201);
   } catch (error) {
     return res.status(500).send(error);
