@@ -7,7 +7,8 @@ import {
   getPostsHashtag,
   editPost,
   deletePost,
-  createComment
+  createComment,
+  createRepost
 } from '../controllers/postController.js';
 import { tokenValidationMiddleware } from '../middlewares/tokenValidator.js';
 import { schemaValidator } from '../middlewares/schemaValidator.js';
@@ -30,4 +31,5 @@ postRouter.delete('/post/:id', tokenValidationMiddleware, validatePostDeletion, 
 // postRouter.post('/comment/:postId', tokenValidationMiddleware, schemaValidator(commentSchema) ,createComment);
 postRouter.post('/comment/:postId', createComment);
 
+postRouter.post('/repost/:postId', tokenValidationMiddleware, createRepost)
 export default postRouter;

@@ -113,7 +113,10 @@ export async function getPosts(req, res) {
   try {
     const id = res.locals.id;
     const posts = await postRepository.getPosts(id);
-    return res.status(200).send(posts.rows);
+    const reposts = await postRepository.getReposts(id)
+    posts.rows.forEach((element) => {{element.isRepost= false}})
+    const postsAndReposts = [...posts.rows, reposts.rows]
+    return res.status(200).send(postsAndReposts.flat().sort((a,b)=> (a.createdAt > b.createdAt)? -1: ((b.createdAt > a.createdAt) ? 1 :0)));
   } catch (err) {
     console.error(err);
     return res.sendStatus(500);
@@ -158,11 +161,13 @@ export async function getPostsHashtag(req, res) {
   try {
     const { hashtag } = req.params;
     const posts = await postRepository.getPostsHashtag(hashtag);
-
+    const reposts = await postRepository.getRepostsHashtag(hashtag);
     if (posts.rowCount === 0) {
       return res.status(404).send("There are no posts yet");
     }
-    return res.status(200).send(posts.rows);
+    posts.rows.forEach((element) => {{element.isRepost= false}})
+    const postsAndReposts = [...posts.rows, reposts.rows]
+    return res.status(200).send(postsAndReposts.flat().sort((a,b)=> (a.createdAt > b.createdAt)? -1: ((b.createdAt > a.createdAt) ? 1 :0)));
   } catch (err) {
     console.error(err);
     return res.status(500).send(err);
@@ -188,5 +193,18 @@ export async function deletePost(req, res) {
   } catch (err) {
     console.error(err);
     return res.sendStatus(500);
+  }
+}
+
+export async function createRepost(req, res){
+  try{
+    const id = res.locals.id;
+    const postId = req.params.postId;
+
+    await postRepository.createRepost(id, postId)
+    return res.sendStatus(201);
+  }catch(err){
+    console.error(err)
+    return res.sendStatus(500)
   }
 }
