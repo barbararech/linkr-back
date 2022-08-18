@@ -11,6 +11,18 @@ async function createComment(comment, postId, userId) {
   );
 }
 
+async function getComment(postId) {
+
+  return db.query(
+    `
+    SELECT c.*, u."pictureUrl", u.username FROM comments c
+    JOIN users u
+    ON c."userId" = u.id
+    WHERE "postId" = $1
+    `
+  , [postId])
+}
+
 async function createPost(
   link,
   article,
@@ -157,4 +169,5 @@ export const postRepository = {
    createPostHashtags,
    getHashtagsByName,
    createComment,
+   getComment
 };

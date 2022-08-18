@@ -9,6 +9,18 @@ export async function createComment(req, res) {
   try {
     await postRepository.createComment(comment, postId, userId);
     return res.sendStatus(201);
+    
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+export async function getComment(req, res) {
+  const { postId } = req.params;
+  try {
+    const comment = await postRepository.getComment(postId);
+    return res.status(200).send(comment.rows);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
