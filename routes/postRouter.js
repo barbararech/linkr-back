@@ -27,6 +27,7 @@ postRouter.put('/post/:id',schemaValidator(postSchema),tokenValidationMiddleware
 
 postRouter.delete('/post/:id', tokenValidationMiddleware, validatePostDeletion, deletePost);
 
-postRouter.post('/comment/:postId', tokenValidationMiddleware, schemaValidator(commentSchema) ,createComment);
+// postRouter.post('/comment/:postId', tokenValidationMiddleware, schemaValidator(commentSchema) ,createComment);
+postRouter.post('/comment/:postId', createComment);
 
 export default postRouter;

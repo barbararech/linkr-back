@@ -4,7 +4,7 @@ import urlMetadata from "url-metadata";
 export async function createComment(req, res) {
   const comment = req.body.comment;
   const { postId } = req.params;
-  const userId = res.locals.id;
+  const userId = req.body.userId;
 
   try {
     await postRepository.createComment(comment, postId, userId);
