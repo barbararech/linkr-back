@@ -15,6 +15,17 @@ export async function createComment(req, res) {
   }
 }
 
+export async function getComment(req, res) {
+  const { postId } = req.params;
+  try {
+    const comment = await postRepository.getComment(postId);
+    return res.status(200).send(comment.rows);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
 export async function createPost(req, res) {
   const text = req.body.text;
   try {

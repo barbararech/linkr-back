@@ -65,15 +65,12 @@ export async function getUsersBySearch(req, res) {
       id
     );
 
-    const filteredResult = result.filter((value, index) => {
-      const _value = JSON.stringify(value);
-      return (
-        index ===
-        result.findIndex((obj) => {
-          return JSON.stringify(obj) === _value;
-        })
-      );
-    });
+    const filteredResult = result.filter(
+      (elem, index, self) =>
+        self.findIndex((t) => {
+          return t.x === elem.x && t.y === elem.y;
+        }) === index
+    );
 
     return res.status(200).send(filteredResult);
   } catch (e) {
