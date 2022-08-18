@@ -31,11 +31,13 @@ async function getUserPicById(id) {
 
 async function getPostsbyUser(id) {
   return db.query(
-    `SELECT p.*, u."pictureUrl", u.username FROM posts p
-  JOIN users u
-  ON p."userId" = u.id
-  WHERE u.id = $1
-  ORDER BY "createdAt" DESC LIMIT 20`,
+    `SELECT p.*, u."pictureUrl", u.username, COUNT(reposts."postId")::int AS "countReposts"
+    FROM posts p
+      JOIN users u ON p."userId" = u.id
+      LEFT JOIN reposts ON p.id = reposts."postId"
+      WHERE u.id = $1
+       GROUP BY p.id, u."pictureUrl", u.username
+      ORDER BY p."createdAt" DESC`,
     [id]
   );
 }
@@ -81,6 +83,42 @@ async function postUnfollowUser(userId, followingUserId) {
   );
 }
 
+async function getRepostsByUser(id){
+  return db.query(
+    `SELECT reposts."isRepost", 
+    reposts."createdAt",
+    reposts."postId" AS id, 
+    reposts."userRepostId",
+    u2."username" AS "reposterName",
+    posts.link, posts.article, 
+    posts."userId", 
+    posts."urlTitle", 
+    posts."urlDescription", 
+    posts."urlImage",
+    COUNT(r2."postId")::int AS "countReposts",
+    u."pictureUrl"
+    FROM posts
+    JOIN reposts ON posts.id = reposts."postId"
+    JOIN users u ON posts."userId" = u.id
+    JOIN users u2 ON reposts."userRepostId" = u2.id
+    JOIN reposts r2 ON r2."postId" = posts.id
+    WHERE reposts."userRepostId" = $1
+    GROUP BY reposts."isRepost", 
+    reposts."createdAt",
+    reposts."postId", 
+    reposts."userRepostId",
+    u2."username",
+    posts.link, posts.article, 
+    posts."userId", 
+    posts."urlTitle", 
+    posts."urlDescription", 
+    posts."urlImage",
+    u."pictureUrl"
+    ORDER BY reposts."createdAt" DESC
+    `,[id]
+  )
+}
+
 export const userRepository = {
   addUser,
   getAllUsers,
@@ -94,4 +132,5 @@ export const userRepository = {
   getFollowingUsers,
   postFollowUser,
   postUnfollowUser,
+  getRepostsByUser
 };

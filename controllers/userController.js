@@ -36,9 +36,11 @@ export async function getUserId(req, res) {
 export async function getUsersPosts(req, res) {
   try {
     const id = req.params.id;
-    const result = await userRepository.getPostsbyUser(id);
-   
-    return res.status(200).send(result.rows);
+    const posts = await userRepository.getPostsbyUser(id);
+    const reposts = await userRepository.getRepostsByUser(id);
+    posts.rows.forEach((element) => {{element.isRepost= false}})
+    const postsAndReposts = [...posts.rows, reposts.rows]
+    return res.status(200).send(postsAndReposts.flat().sort((a,b)=> (a.createdAt > b.createdAt)? -1: ((b.createdAt > a.createdAt) ? 1 :0)));
   } catch (e) {
     console.error(e);
     return res.status(500).send("Erro de conexão com o servidor");
