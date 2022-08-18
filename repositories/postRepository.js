@@ -97,54 +97,57 @@ async function removePostLikes(postId) {
 
 async function getPosts(id) {
   return db.query(
-    `SELECT p.*, u."pictureUrl", u.username, COUNT(reposts."postId")::int AS "countReposts", "followingId"
-    FROM posts p
-    JOIN users u ON p."userId" = u.id
-    JOIN following f ON f."followingId" = p."userId"
-    LEFT JOIN reposts ON p.id = reposts."postId"
+    ` SELECT reposts."isRepost", 
+    reposts."createdAt",
+    reposts."postId" AS id, 
+    reposts."userRepostId",
+    u2."username" AS "reposterName",
+    posts.link, posts.article, 
+    posts."userId", 
+    posts."urlTitle", 
+    posts."urlDescription", 
+    posts."urlImage",
+    COUNT(r2."postId")::int AS "countReposts",
+    u."pictureUrl",
+    "followingId"
+    FROM posts
+    JOIN reposts ON posts.id = reposts."postId"
+    JOIN users u ON posts."userId" = u.id
+    JOIN users u2 ON reposts."userRepostId" = u2.id
+    JOIN following f ON f."followingId" = reposts."userRepostId"
+    JOIN reposts r2 ON r2."postId" = posts.id
     WHERE f."userId" = $1
-    GROUP BY p.id, u."pictureUrl", u.username, f."followingId"
-    ORDER BY "createdAt" DESC `,
+    GROUP BY reposts."isRepost", 
+    reposts."createdAt",
+    reposts."postId", 
+    reposts."userRepostId",
+    u2."username",
+    posts.link, posts.article, 
+    posts."userId", 
+    posts."urlTitle", 
+    posts."urlDescription", 
+    posts."urlImage",
+    u."pictureUrl",
+    "followingId"
+   
+   UNION ALL
+   
+  SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost",
+  p."createdAt", p.id, reposts."userRepostId",
+  u.username, p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage",
+  COUNT(reposts."postId")::int AS "countReposts", 
+  u."pictureUrl", "followingId"
+      FROM posts p
+      JOIN users u ON p."userId" = u.id
+      JOIN following f ON f."followingId" = p."userId"
+      LEFT JOIN reposts ON p.id = reposts."postId"
+      WHERE f."userId" = $1
+      GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u."pictureUrl", u.username, f."followingId"
+      ORDER BY "createdAt" DESC LIMIT 10`,
     [id] 
   );
 }
 
-async function getReposts(id){
-  return db.query(`
-  SELECT reposts."isRepost", 
-  reposts."createdAt",
-  reposts."postId" AS id, 
-  reposts."userRepostId",
-  u2."username" AS "reposterName",
-  posts.link, posts.article, 
-  posts."userId", 
-  posts."urlTitle", 
-  posts."urlDescription", 
-  posts."urlImage",
-  COUNT(r2."postId")::int AS "countReposts",
-  u."pictureUrl"
-  FROM posts
-  JOIN reposts ON posts.id = reposts."postId"
-  JOIN users u ON posts."userId" = u.id
-  JOIN users u2 ON reposts."userRepostId" = u2.id
-  JOIN following f ON f."followingId" = reposts."userRepostId"
-  JOIN reposts r2 ON r2."postId" = posts.id
-  WHERE f."userId" = $1
-  GROUP BY reposts."isRepost", 
-  reposts."createdAt",
-  reposts."postId", 
-  reposts."userRepostId",
-  u2."username",
-  posts.link, posts.article, 
-  posts."userId", 
-  posts."urlTitle", 
-  posts."urlDescription", 
-  posts."urlImage",
-  u."pictureUrl"
-  ORDER BY reposts."createdAt" DESC
-`,[id]  
-  );
-}
 
 async function getPostById(id) {
   return db.query(
@@ -163,15 +166,53 @@ async function editPost(id, text) {
 }
 
 async function getPostsHashtag(hashtag) {
-  return db.query(`SELECT p.*, u."pictureUrl", u.username, ht.name AS "hashtagName", COUNT(reposts."postId")::int AS "countReposts"
+  return db.query(`  SELECT reposts."isRepost", 
+  reposts."createdAt",
+  reposts."postId" AS id, 
+  reposts."userRepostId",
+  u2."username" AS "reposterName",
+  posts.link,
+  posts.article, 
+  posts."userId", 
+  posts."urlTitle", 
+  posts."urlDescription", 
+  posts."urlImage",
+  COUNT(r2."postId")::int AS "countReposts",
+  u."pictureUrl",
+  ht."name" AS "hashtagName"
+  FROM posts 
+  JOIN reposts ON posts.id = reposts."postId"
+  JOIN users u ON posts."userId" = u.id
+  JOIN users u2 ON reposts."userRepostId" = u2.id
+  JOIN "postHashtag" ph ON ph."postId" = reposts."postId"
+  JOIN hashtags ht ON ht.id = ph."hashtagId"
+  JOIN reposts r2 ON r2."postId" = posts.id
+  WHERE ht."name" = $1
+  GROUP BY reposts."isRepost", 
+  reposts."createdAt",
+  reposts."postId", 
+  reposts."userRepostId",
+  u2."username",
+  posts.link, posts.article, 
+  posts."userId", 
+  posts."urlTitle", 
+  posts."urlDescription", 
+  posts."urlImage",
+  u."pictureUrl",
+  ht."name"
+ 
+ UNION ALL
+ 
+ SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost",
+ p."createdAt", p.id , reposts."userRepostId", u.username, p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage" , COUNT(reposts."postId")::int AS "countReposts", u."pictureUrl", ht.name AS "hashtagName"
   FROM posts p
   JOIN users u ON p."userId" = u.id
   JOIN "postHashtag" ph ON ph."postId" = p.id
   JOIN hashtags ht ON ht.id = ph."hashtagId"
   LEFT JOIN reposts ON p.id = reposts."postId"
   WHERE "name" = $1
-  GROUP BY p.id, u."pictureUrl", u.username, ht.name
-  ORDER BY p."createdAt" DESC`, [hashtag]);
+  GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, ht.name, u."pictureUrl"
+ORDER BY "createdAt" DESC LIMIT 10`, [hashtag]);
 }
 
 async function deletePost(id) {
@@ -194,45 +235,6 @@ async function createRepost(id,postId){
   `, [postId, id])
 }
 
-async function getRepostsHashtag(hashtag) {
-  return db.query(`
-  SELECT reposts."isRepost", 
-  reposts."createdAt",
-  reposts."postId" AS id, 
-  reposts."userRepostId",
-  u2."username" AS "reposterName",
-  posts.link, posts.article, 
-  posts."userId", 
-  posts."urlTitle", 
-  posts."urlDescription", 
-  posts."urlImage",
-  COUNT(r2."postId")::int AS "countReposts",
-  u."pictureUrl",
-  ht."name" AS "hashtagName"
-  FROM posts
-  JOIN reposts ON posts.id = reposts."postId"
-  JOIN users u ON posts."userId" = u.id
-  JOIN users u2 ON reposts."userRepostId" = u2.id
-  JOIN "postHashtag" ph ON ph."postId" = reposts."postId"
-  JOIN hashtags ht ON ht.id = ph."hashtagId"
-  JOIN reposts r2 ON r2."postId" = posts.id
-  WHERE ht."name" = $1
-  GROUP BY reposts."isRepost", 
-  reposts."createdAt",
-  reposts."postId", 
-  reposts."userRepostId",
-  u2."username",
-  posts.link, posts.article, 
-  posts."userId", 
-  posts."urlTitle", 
-  posts."urlDescription", 
-  posts."urlImage",
-  u."pictureUrl",
-  ht."name"
-  ORDER BY reposts."createdAt" DESC
-  `,[hashtag]
-  )
-}
 
 export const postRepository = {
    getPosts,
@@ -250,8 +252,6 @@ export const postRepository = {
    createPostHashtags,
    getHashtagsByName,
    createComment,
-   getReposts,
    createRepost,
-   getRepostsHashtag,
    getComment
 };
