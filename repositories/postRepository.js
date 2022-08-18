@@ -101,6 +101,7 @@ async function getPosts(id) {
     reposts."createdAt",
     reposts."postId" AS id, 
     reposts."userRepostId",
+    u."username" AS username,
     u2."username" AS "reposterName",
     posts.link, posts.article, 
     posts."userId", 
@@ -121,6 +122,7 @@ async function getPosts(id) {
     reposts."createdAt",
     reposts."postId", 
     reposts."userRepostId",
+    u."username",
     u2."username",
     posts.link, posts.article, 
     posts."userId", 
@@ -134,15 +136,16 @@ async function getPosts(id) {
    
   SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost",
   p."createdAt", p.id, reposts."userRepostId",
-  u.username, p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage",
+  u.username, u2.username,p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage",
   COUNT(reposts."postId")::int AS "countReposts", 
   u."pictureUrl", "followingId"
       FROM posts p
       JOIN users u ON p."userId" = u.id
       JOIN following f ON f."followingId" = p."userId"
       LEFT JOIN reposts ON p.id = reposts."postId"
+      JOIN users u2 ON reposts."userRepostId" = u2.id
       WHERE f."userId" = $1
-      GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u."pictureUrl", u.username, f."followingId"
+      GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u."pictureUrl", u.username, u2.username, f."followingId"
       ORDER BY "createdAt" DESC LIMIT 10`,
     [id] 
   );
@@ -170,6 +173,7 @@ async function getPostsHashtag(hashtag) {
   reposts."createdAt",
   reposts."postId" AS id, 
   reposts."userRepostId",
+  u."username" AS username,
   u2."username" AS "reposterName",
   posts.link,
   posts.article, 
@@ -192,6 +196,7 @@ async function getPostsHashtag(hashtag) {
   reposts."createdAt",
   reposts."postId", 
   reposts."userRepostId",
+  u."username",
   u2."username",
   posts.link, posts.article, 
   posts."userId", 
@@ -204,14 +209,15 @@ async function getPostsHashtag(hashtag) {
  UNION ALL
  
  SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost",
- p."createdAt", p.id , reposts."userRepostId", u.username, p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage" , COUNT(reposts."postId")::int AS "countReposts", u."pictureUrl", ht.name AS "hashtagName"
+ p."createdAt", p.id , reposts."userRepostId", u.username, u2.username, p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage" , COUNT(reposts."postId")::int AS "countReposts", u."pictureUrl", ht.name AS "hashtagName"
   FROM posts p
   JOIN users u ON p."userId" = u.id
   JOIN "postHashtag" ph ON ph."postId" = p.id
   JOIN hashtags ht ON ht.id = ph."hashtagId"
   LEFT JOIN reposts ON p.id = reposts."postId"
+  JOIN users u2 ON reposts."userRepostId" = u2.id
   WHERE "name" = $1
-  GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, ht.name, u."pictureUrl"
+  GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, u2.username, ht.name, u."pictureUrl"
 ORDER BY "createdAt" DESC LIMIT 10`, [hashtag]);
 }
 

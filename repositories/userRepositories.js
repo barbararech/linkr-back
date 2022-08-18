@@ -35,6 +35,7 @@ async function getPostsbyUser(id) {
     reposts."createdAt",
     reposts."postId" AS id, 
     reposts."userRepostId",
+    u."username" AS username,
     u2."username" AS "reposterName",
     posts.link, posts.article, 
     posts."userId", 
@@ -53,6 +54,7 @@ async function getPostsbyUser(id) {
     reposts."createdAt",
     reposts."postId", 
     reposts."userRepostId",
+    u."username",
     u2."username",
     posts.link, posts.article, 
     posts."userId", 
@@ -62,14 +64,15 @@ async function getPostsbyUser(id) {
     u."pictureUrl"
   UNION ALL
     
-   SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, p.link, 
+   SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, u2.username, p.link, 
    p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage",
   COUNT(reposts."postId")::int AS "countReposts", u."pictureUrl"
       FROM posts p
         JOIN users u ON p."userId" = u.id
         LEFT JOIN reposts ON p.id = reposts."postId"
+        JOIN users u2 ON reposts."userRepostId" = u2.id
         WHERE u.id = $1
-         GROUP BY p.id, u."pictureUrl", u.username, reposts."isRepost", reposts."userRepostId"
+         GROUP BY p.id, u."pictureUrl", u.username, u2.username, reposts."isRepost", reposts."userRepostId"
     ORDER BY "createdAt" DESC LIMIT 10`,
     [id]
   );
