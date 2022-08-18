@@ -61,9 +61,24 @@ export async function getUserById(req, res) {
 
 export async function getUsersBySearch(req, res) {
   const username = req.body.username;
+  const { id } = res.locals;
   try {
-    const result = await userRepository.getUsersBySearch(username);
-    return res.status(200).send(result.rows);
+    const { rows: result } = await userRepository.getUsersBySearch(
+      username,
+      id
+    );
+
+    const filteredResult = result.filter((value, index) => {
+      const _value = JSON.stringify(value);
+      return (
+        index ===
+        result.findIndex((obj) => {
+          return JSON.stringify(obj) === _value;
+        })
+      );
+    });
+
+    return res.status(200).send(filteredResult);
   } catch (e) {
     return res.sendStatus(500);
   }

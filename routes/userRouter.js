@@ -21,7 +21,7 @@ userRouter.get("/userId", tokenValidationMiddleware, getUserId);
 userRouter.get("/user/:id", tokenValidationMiddleware, getUsersPosts);
 userRouter.get("/userinfo/:id", tokenValidationMiddleware, getUserById);
 
-userRouter.post("/search", getUsersBySearch);
+userRouter.post("/search", tokenValidationMiddleware, getUsersBySearch);
 
 userRouter.get("/following/", tokenValidationMiddleware, getFollowingUsers);
 userRouter.get("/following/:id", tokenValidationMiddleware, getFollowingUser);
