@@ -44,10 +44,16 @@ async function getUserNameById(id) {
   return db.query(`SELECT username FROM users WHERE id=$1`, [id]);
 }
 
-async function getUsersBySearch(username) {
-  return db.query(` SELECT * FROM users WHERE username ILIKE $1 `, [
-    `${username}%`,
-  ]);
+async function getUsersBySearch(username, id) {
+  return db.query(
+    ` SELECT following.*, users.*
+  FROM users 
+  FULL OUTER JOIN following 
+  ON "followingId" = users.id
+  WHERE username ILIKE $1
+  ORDER BY "userId"=$2 AND "userId" IS NOT NULL DESC `,
+    [`${username}%`, id]
+  );
 }
 
 async function getFollowingUser(userId, followingUserId) {
@@ -58,16 +64,13 @@ async function getFollowingUser(userId, followingUserId) {
 }
 
 async function getFollowingUsers(userId, followingUserId) {
-  return db.query(
-    `SELECT * FROM following WHERE "userId"=$1`,
-    [userId]
-  );
+  return db.query(`SELECT * FROM following WHERE "userId"=$1`, [userId]);
 }
 
 async function postFollowUser(userId, followingUserId) {
-  console.log(userId)
-  console.log(followingUserId)
-  
+  console.log(userId);
+  console.log(followingUserId);
+
   return db.query(
     `INSERT INTO "following" ("userId", "followingId") VALUES ($1, $2)`,
     [userId, followingUserId]
