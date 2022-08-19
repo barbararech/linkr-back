@@ -8,13 +8,11 @@ export async function signUp(req, res) {
 
   try {
     const { rows: user } = await userRepository.getUserByEmail(email);
-    console.log(user)
     if (user.length !== 0) {
       return res.sendStatus(409);
     }
 
    const id = await userRepository.addUser(email, passwordEncrypted, username, pictureUrl);
-   console.log(id.rows[0].id)
    await userRepository.postFollowUser(id.rows[0].id, id.rows[0].id)
     return res.sendStatus(201);
   } catch (error) {

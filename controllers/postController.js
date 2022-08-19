@@ -61,7 +61,6 @@ export async function createPost(req, res) {
         const check = await postRepository.getHashtagsByName(word);
         if (check.rowCount === 0) {
           const newHashtag = await postRepository.createHashtag(word);
-          console.log(newHashtag);
           await postRepository.createPostHashtags(
             postId.rows[0].id,
             newHashtag.rows[0].id
@@ -168,7 +167,6 @@ export async function editPost(req, res) {
         const check = await postRepository.getHashtagsByName(word);
         if (check.rowCount === 0) {
           const newHashtag = await postRepository.createHashtag(word);
-          console.log(newHashtag);
           await postRepository.createPostHashtags(id, newHashtag.rows[0].id);
         }
 

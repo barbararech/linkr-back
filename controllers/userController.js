@@ -70,13 +70,11 @@ export async function getUsersBySearch(req, res) {
       username,
       id
     );
-    console.log(result);
     let filteredResult = result.filter(
       (person, index) =>
         index ===
         result.findIndex((other) => person.username === other.username)
     );
-    console.log(filteredResult);
     return res.status(200).send(filteredResult);
   } catch (e) {
     return res.sendStatus(500);

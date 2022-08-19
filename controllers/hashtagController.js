@@ -11,7 +11,6 @@ export async function trending(req, res) {
     }
 
     const { rows: trending } = await hashtagRepository.getTrending();
-    console.log(trending)
     return res.status(200).send(trending);
   } catch (error) {
     return res.status(500).send(error);

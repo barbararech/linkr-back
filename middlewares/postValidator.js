@@ -3,7 +3,6 @@ import { postRepository } from "../repositories/postRepository.js";
 export async function validatePostEdit(req, res, next){
     const userId= res.locals.id;
     const id = req.params.id;
-    console.log(userId)
     const post = await postRepository.getPostById(id);
     
 
@@ -38,13 +37,11 @@ export async function validatePostDeletion(req, res, next){
     if(post.rows[0].postLikes > 0){
         const postLikes = post.rows[0].postLikes
         res.locals.postLikes = postLikes
-        console.log("quantidade de lijke : " +postLikes)
     }
 
     if(post.rows[0].hashtags > 0){
         const hashtags = post.rows[0].hashtags
         res.locals.hashtags = hashtags
-        console.log("qtd hashtags: " + hashtags)
     }
 
     res.locals.postId= id
