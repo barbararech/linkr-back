@@ -36,7 +36,13 @@ export async function getUserId(req, res) {
 export async function getUsersPosts(req, res) {
   try {
     const id = req.params.id;
-    const posts = await userRepository.getPostsbyUser(id);
+    const page = parseInt(req.query.page);
+    const limit = 10;
+    const offset = page * 10;
+    const posts = await userRepository.getPostsbyUser(id, limit, offset);
+    if (posts.length < 1 && page === 0){
+      return res.sendStatus(204)
+    }
     return res.status(200).send(posts.rows)
   } catch (e) {
     console.error(e);
