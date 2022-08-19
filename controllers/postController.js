@@ -124,10 +124,8 @@ export async function getPosts(req, res) {
   try {
     const id = res.locals.id;
     const page = parseInt(req.query.page);
-    const quantity = req.query.quantity;
-    let limit;
-    if(!quantity) limit = 10;
-    if (quantity) limit = quantity
+    const limit = 10;
+
     const offset = page * 10;
     const posts = await postRepository.getPosts(id, limit, offset);
 
@@ -179,10 +177,7 @@ export async function getPostsHashtag(req, res) {
   try {
     const { hashtag } = req.params;
     const page = parseInt(req.query.page);
-    const quantity = req.query.quantity;
-    let limit;
-    if(!quantity) limit = 10;
-    if (quantity) limit = quantity
+    const limit = 10;
     const offset = page * 10;
     const posts = await postRepository.getPostsHashtag(hashtag, limit, offset);
     if (posts.length < 1 && page === 0){

@@ -37,10 +37,7 @@ export async function getUsersPosts(req, res) {
   try {
     const id = req.params.id;
     const page = parseInt(req.query.page);
-    const quantity = req.query.quantity;
-    let limit;
-    if(!quantity) limit = 10;
-    if (quantity) limit = quantity
+    const limit = 10;
     const offset = page * 10;
     const posts = await userRepository.getPostsbyUser(id, limit, offset);
     if (posts.length < 1 && page === 0){
