@@ -95,7 +95,7 @@ async function removePostLikes(postId) {
   );
 }
 
-async function getPosts(id) {
+async function getPosts(id,limit, offset) {
   return db.query(
     ` SELECT reposts."isRepost", 
     reposts."createdAt",
@@ -134,20 +134,20 @@ async function getPosts(id) {
    
    UNION ALL
    
-  SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost",
+  SELECT p."isRepost",
   p."createdAt", p.id, reposts."userRepostId",
   u.username, u2.username,p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage",
   COUNT(reposts."postId")::int AS "countReposts", 
   u."pictureUrl", "followingId"
       FROM posts p
-      JOIN users u ON p."userId" = u.id
-      JOIN following f ON f."followingId" = p."userId"
+      LEFT JOIN users u ON p."userId" = u.id
+      LEFT JOIN following f ON f."followingId" = p."userId"
       LEFT JOIN reposts ON p.id = reposts."postId"
-      JOIN users u2 ON reposts."userRepostId" = u2.id
+      LEFT JOIN users u2 ON reposts."userRepostId" = u2.id
       WHERE f."userId" = $1
-      GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u."pictureUrl", u.username, u2.username, f."followingId"
-      ORDER BY "createdAt" DESC LIMIT 10`,
-    [id] 
+      GROUP BY p."isRepost", p."createdAt", p.id, reposts."userRepostId", u."pictureUrl", u.username, u2.username, f."followingId"
+      ORDER BY "createdAt" DESC LIMIT $2 OFFSET $3`,
+    [id, limit, offset] 
   );
 }
 
@@ -168,7 +168,7 @@ async function editPost(id, text) {
   db.query(`UPDATE posts SET article = $1 WHERE id = $2`, [text, id]);
 }
 
-async function getPostsHashtag(hashtag) {
+async function getPostsHashtag(hashtag, limit, offset) {
   return db.query(`  SELECT reposts."isRepost", 
   reposts."createdAt",
   reposts."postId" AS id, 
@@ -208,17 +208,17 @@ async function getPostsHashtag(hashtag) {
  
  UNION ALL
  
- SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost",
+ SELECT p."isRepost",
  p."createdAt", p.id , reposts."userRepostId", u.username, u2.username, p.link, p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage" , COUNT(reposts."postId")::int AS "countReposts", u."pictureUrl", ht.name AS "hashtagName"
   FROM posts p
-  JOIN users u ON p."userId" = u.id
-  JOIN "postHashtag" ph ON ph."postId" = p.id
-  JOIN hashtags ht ON ht.id = ph."hashtagId"
+  LEFT JOIN users u ON p."userId" = u.id
+  LEFT JOIN "postHashtag" ph ON ph."postId" = p.id
+  LEFT JOIN hashtags ht ON ht.id = ph."hashtagId"
   LEFT JOIN reposts ON p.id = reposts."postId"
-  JOIN users u2 ON reposts."userRepostId" = u2.id
+  LEFT JOIN users u2 ON reposts."userRepostId" = u2.id
   WHERE "name" = $1
   GROUP BY reposts."isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, u2.username, ht.name, u."pictureUrl"
-ORDER BY "createdAt" DESC LIMIT 10`, [hashtag]);
+ORDER BY "createdAt" DESC LIMIT $2 OFFSET $3`, [hashtag, limit, offset]);
 }
 
 async function deletePost(id) {

@@ -29,7 +29,7 @@ async function getUserPicById(id) {
   );
 }
 
-async function getPostsbyUser(id) {
+async function getPostsbyUser(id, limit, offset) {
   return db.query(
     `SELECT reposts."isRepost", 
     reposts."createdAt",
@@ -45,9 +45,9 @@ async function getPostsbyUser(id) {
     COUNT(r2."postId")::int AS "countReposts",
     u."pictureUrl"
     FROM posts
-    JOIN reposts ON posts.id = reposts."postId"
+    LEFT JOIN reposts ON posts.id = reposts."postId"
     JOIN users u ON posts."userId" = u.id
-    JOIN users u2 ON reposts."userRepostId" = u2.id
+    LEFT JOIN users u2 ON reposts."userRepostId" = u2.id
     JOIN reposts r2 ON r2."postId" = posts.id
     WHERE reposts."userRepostId" = $1
     GROUP BY reposts."isRepost", 
@@ -64,17 +64,19 @@ async function getPostsbyUser(id) {
     u."pictureUrl"
   UNION ALL
     
-   SELECT COALESCE(reposts."isRepost", FALSE) AS "isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, u2.username, p.link, 
+SELECT p."isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, u2.username, p.link, 
    p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage",
-  COUNT(reposts."postId")::int AS "countReposts", u."pictureUrl"
+  COUNT(r2."postId")::int AS "countReposts", u."pictureUrl"
       FROM posts p
-        JOIN users u ON p."userId" = u.id
-        LEFT JOIN reposts ON p.id = reposts."postId"
-        JOIN users u2 ON reposts."userRepostId" = u2.id
+        LEFT JOIN users u ON p."userId" = u.id
+        LEFT JOIN reposts ON p."userId" = reposts."userRepostId"
+		LEFT JOIN reposts r2 ON p.id = r2."postId"
+        LEFT JOIN users u2 ON reposts."userRepostId" = u2.id
         WHERE u.id = $1
-         GROUP BY p.id, u."pictureUrl", u.username, u2.username, reposts."isRepost", reposts."userRepostId"
-    ORDER BY "createdAt" DESC LIMIT 10`,
-    [id]
+         GROUP BY p."isRepost", p."createdAt", p.id, reposts."userRepostId", u.username, u2.username, p.link, 
+   p.article, p."userId", p."urlTitle", p."urlDescription", p."urlImage", u."pictureUrl"
+    ORDER BY "createdAt" DESC LIMIT $2 OFFSET $3`,
+    [id, limit, offset]
   );
 }
 

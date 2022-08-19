@@ -123,7 +123,17 @@ export async function getLikes(req, res) {
 export async function getPosts(req, res) {
   try {
     const id = res.locals.id;
-    const posts = await postRepository.getPosts(id);
+    const page = parseInt(req.query.page);
+    const quantity = req.query.quantity;
+    let limit;
+    if(!quantity) limit = 10;
+    if (quantity) limit = quantity
+    const offset = page * 10;
+    const posts = await postRepository.getPosts(id, limit, offset);
+
+    if (posts.length < 1 && page === 0){
+      return res.sendStatus(204)
+    }
     res.status(200).send(posts.rows)
   } catch (err) {
     console.error(err);
@@ -168,9 +178,15 @@ export async function editPost(req, res) {
 export async function getPostsHashtag(req, res) {
   try {
     const { hashtag } = req.params;
-    const posts = await postRepository.getPostsHashtag(hashtag);
-    if (posts.rowCount === 0) {
-      return res.status(404).send("There are no posts yet");
+    const page = parseInt(req.query.page);
+    const quantity = req.query.quantity;
+    let limit;
+    if(!quantity) limit = 10;
+    if (quantity) limit = quantity
+    const offset = page * 10;
+    const posts = await postRepository.getPostsHashtag(hashtag, limit, offset);
+    if (posts.length < 1 && page === 0){
+      return res.sendStatus(204)
     }
     res.status(200).send(posts.rows)
   } catch (err) {
