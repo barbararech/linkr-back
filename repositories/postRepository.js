@@ -1,5 +1,18 @@
 //import { func } from "joi";
+//import { func } from "joi";
 import db from "../database/db.js";
+
+async function getNumComment(postId){
+  return db.query(
+  `  
+SELECT posts.*, COUNT(comments.id) AS "postComments"
+FROM posts
+LEFT JOIN "comments" ON "comments"."postId" = posts.id
+WHERE posts.id = $1
+GROUP BY posts.id
+  `, [postId]
+  );
+}
 
 async function createComment(comment, postId, userId) {
   return db.query(
@@ -259,5 +272,6 @@ export const postRepository = {
    getHashtagsByName,
    createComment,
    createRepost,
-   getComment
+   getComment,
+   getNumComment
 };

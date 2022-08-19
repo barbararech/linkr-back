@@ -1,6 +1,18 @@
 import { postRepository } from "../repositories/postRepository.js";
 import urlMetadata from "url-metadata";
 
+export async function getNumComment(req, res) {
+  
+  const {postId} = req.params;
+
+  try{
+    const count = await postRepository.getNumComment(postId)
+    return res.status(200).send(count.rows);
+  } catch {
+    return res.sendStatus(500);
+  }
+}
+
 export async function createComment(req, res) {
   const comment = req.body.comment;
   const { postId } = req.params;
